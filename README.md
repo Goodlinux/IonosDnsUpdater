@@ -54,7 +54,37 @@ Vous pouvez aussi télécharger l'image depuis le Docker Hub :
 
 [![docker](https://img.shields.io/static/v1?label=docker&message=Image_Docker_zipsme&color=green)](link=https://hub.docker.com/r/goodlinux/dnsupdater,float="left")
 
-# INSTALLATION 
 
-Lors du premier lancement, un message va apparaitre vous invitant a coller une adresse dans le navigateur WEB 
-https://domainconnect.1and1.com/async/v2/domainTemplates/providers/domainconnect.org?client_id=domainconnect.org&scope=dynamicdns-v2&domain=dns.me&host=my&IP=0.0.0.0&IPv4= setup --domain new.domain.org --config \$CONFFILE 
+IONOS DNS Record Updater
+About the Project
+Since IONOS made an API available to manage your domains and I needed to change my records regularly I decided to create an automated dns record updater.
+
+Getting Started
+Prerequisites
+apt install curl jq
+Installation
+Get an API Key at IONOS API Docs
+Clone the repo
+git clone https://github.com/888iee/ionos_dns_record_updater.git
+cd into directory
+cd ionos_dns_record_updater
+Create a .env File
+touch .env
+Paste your key and values in
+api_key="prefix.encryptionkey"
+domain="my.domain.com"
+dns_type="A"
+Usage
+You can run the updater script with following commands.
+
+chmod +x updater.sh
+./updater 
+# or set ip initally and don't retrieve ip automatically 
+./updater -a 127.0.0.1
+# for more information
+./updater -h
+Disclaimer
+Only IPv4 Adress was tested.
+
+License
+Distributed under the MIT License. See LICENSE for more information.

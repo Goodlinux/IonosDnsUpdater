@@ -30,32 +30,32 @@ Vous pouvez aussi télécharger l'image depuis le Docker Hub :
  About the Project
  Since IONOS made an API available to manage your domains and I needed to change my records regularly I decided to create an automated dns record updater.
 
-Getting Started
-Prerequisites
-apt install curl jq
-Installation
-Get an API Key at IONOS API Docs
-Clone the repo
-git clone https://github.com/888iee/ionos_dns_record_updater.git
-cd into directory
-cd ionos_dns_record_updater
-Create a .env File
-touch .env
-Paste your key and values in
-api_key="prefix.encryptionkey"
-domain="my.domain.com"
-dns_type="A"
-Usage
-You can run the updater script with following commands.
+ Getting Started
+ Prerequisites
+ apt install curl jq
+ Installation
+ Get an API Key at IONOS API Docs
+ Clone the repo
+ git clone https://github.com/888iee/ionos_dns_record_updater.git
+ cd into directory
+ cd ionos_dns_record_updater
+ Create a .env File
+ touch .env
+ Paste your key and values in
+ api_key="prefix.encryptionkey"
+ domain="my.domain.com"
+ dns_type="A"
+ Usage
+ You can run the updater script with following commands.
 
-chmod +x updater.sh
-./updater 
-# or set ip initally and don't retrieve ip automatically 
-./updater -a 127.0.0.1
-# for more information
-./updater -h
-Disclaimer
-Only IPv4 Adress was tested.
+ chmod +x updater.sh
+ ./updater 
+ # or set ip initally and don't retrieve ip automatically 
+ ./updater -a 127.0.0.1
+ # for more information
+ ./updater -h
+ Disclaimer
+ Only IPv4 Adress was tested. 
 
-License
-Distributed under the MIT License. See LICENSE for more information.
+ License
+ Distributed under the MIT License. See LICENSE for more information.

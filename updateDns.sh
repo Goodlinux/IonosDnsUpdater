@@ -96,8 +96,8 @@ function UpdateDNSRecord() {
 	log "Updating DNS Record."
 	updatedns_url="$base_url$dns_zone/$zone_id/records/$1"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\"}]"
+	log "url $updatedns_url Record -$record_content"
 	curl -X PUT $updatedns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
-	log $updatedns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
 	
@@ -105,8 +105,8 @@ function CreateDNSRecord() {
 	log "Creating DNS Record."
 	createdns_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
+	log "url : $createdns_url   Record : $record_content"
 	curl -X POST $createdns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
-	log $createdns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
 function CheckParamIP() {

@@ -23,8 +23,7 @@ kill_script=false
 
 function Help() {
      # Show Help
-     echo "If you need further help than the below, read the readme file \n
-            or create an issue on github."
+    echo "If you need further help than the below, read the readme file \n  or create an issue on github."
     echo "Syntax update.sh [-a|-e|-f|-v]."
     echo "options:"
     echo "-a	change dns entry to given ip adress"
@@ -36,7 +35,7 @@ function Help() {
 
 function ErrorCodes() {
 	echo "Error Codes: "
-	echo "1		Invalid flags or reference"
+	echo "1	Invalid flags or reference"
 	echo "2 	ZoneId was found"
 }
 
@@ -50,65 +49,76 @@ function log() {
 	fi
 }
 
-function RetrieveIpAdress() {
+function GetExtIpAdress() {
 	ip=$(curl -s https://ipinfo.io/ip)
 	log "Ip set to $ip." 
 }
 
-function RetrieveZoneId() {
+function GetZoneId() {
     log "Retrieving zone id."
     # get zone ID
-    zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $api_key" -s );
+    zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
     name=$(echo $zone_id | jq '.[] | .name?' );
     if [[ "$name" == "" ]]
-	then 
-	# exit with error 
-	echo "Error: $zone_id | jq '.[]'"
-	exit 2
+	    then 
+	    # exit with error 
+	    echo "Error: $zone_id | jq '.[]'"
+	    exit 2
     fi
     zone_id=$(echo $zone_id | jq '.[] | .id?' | tr -d '"');
     log "Zoneid was set to $zone_id."
 }
 
-function DeleteRecord() {	
-    log "Deleting record $1."
-    delete_url="$base_url$dns_zone/$zone_id/records/$1"
-    curl -X DELETE $delete_url -H "accept: */*" -H "$curl_param $api_key"
-}
+#function DeleteRecord() {	
+#   log "Deleting record $1."
+#    delete_url="$base_url$dns_zone/$zone_id/records/$1"
+#    curl -X DELETE $delete_url -H "accept: */*" -H "$curl_param $API_KEY"
+#}
 
 function GetCustomerZone() {
     log "Retrieving dns records."
-    customer_url="$base_url$dns_zone/$zone_id?recordType=$dns_type"	
-    records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $api_key" -s | jq '.records')
+    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"	
+    records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     log "Find maching domain record."
+	log "$records"
     echo $records | jq -c '.[]'  | while read i; do
     name=$(echo $i | jq '.name' | tr -d '"')
-    if [[ $name = "$domain" || $name = "www.$domain" ]];
-	then
-	    log "Matching record found."
-	    current_ip=$(echo $i | jq '.content' | tr -d '"')
-	   if [[ "$current_ip" == "$ip" ]];
-		then 
-		    kill_script = true	
-	   fi
-	   if[ $kill_script ];
-		then
-		    log "Current ip is set. Script will quit now."
-		    kill -s TERM $TOP_PID
-		else
-		    rec_id=$(echo $i | jq '.id' | tr -d '"')
-		    DeleteRecord "$rec_id"
-	   fi	
+    if [[ $name = "$DOMAIN" || $name = "www.$DOMAIN" ]];
+        then
+            log "Matching record found."
+            current_ip=$(echo $i | jq '.content' | tr -d '"')
+            if [[ "$current_ip" == "$ip" ]];
+                then 
+                    log "Ip dans l'enregistrement : $current_ip pas de mise à jour"
+            else 
+                    rec_id=$(echo $i | jq '.id' | tr -d '"')
+                    UpdateDNSRecord "$rec_id"
+					log "Ip mise à jour ancienne : $current_ip   New : $ip"
+					exit 0
+            fi
+            #rec_id=$(echo $i | jq '.id' | tr -d '"')
+            #DeleteRecord "$rec_id"
     fi
     done
+	log "Enregistrement non trouvé"
 }
+	
+function UpdateDNSRecord() {
+	log "Updating DNS Record."
+	createdns_url="$base_url$dns_zone/$zone_id/records/$1"
+	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\"}]"
+	curl -X PUT $createdns_url -H "accept: */*" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+	log $createdns_url -H "accept: */*" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+}
+
 	
 function CreateDNSRecord() {
 	log "Creating DNS Record."
 	createdns_url="$base_url$dns_zone/$zone_id/records"
-	record_content="[{\"name\":\"$domain\",\"type\":\"$dns_type\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-	curl -X POST $createdns_url -H "accept: */*" -H "$curl_param $api_key" -H "Content-Type: application/json" -d "$record_content"
+	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
+	curl -X POST $createdns_url -H "accept: */*" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+	log $createdns_url -H "accept: */*" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
 function CheckIP() {
@@ -129,27 +139,27 @@ function CheckIP() {
 
 # Get Flags
 while getopts "ha:ef:v" opt; do
-        case $opt in
-	# display help
-            h) Help;;
+     case $opt in
+		# display help
+			h) Help;;
 		# ip adress
             a) ip=$OPTARG;;
 		# show error codes
-	    e) ErrorCodes exit;;
+			e) ErrorCodes exit;;
 		# redirect verbose output to file
-	    f) redirect_mode=true && redirect_file=$OPTARG;;
+			f) redirect_mode=true && redirect_file=$OPTARG;;
 		# verbose mode
             v) verbose_mode=true;;
 		# invalid options
- 	    \?) echo "Error: Invalid options"
+			\?) echo "Error: Invalid options"
 	    exit 1;;
         esac
 done
 
 # checks if ip was set and retrieves it if not
-CheckIP
-RetrieveZoneId
+GetExtIpAdress
+GetZoneId
 GetCustomerZone
-CreateDNSRecord
+#CreateDNSRecord
 
 log "This script is done and will exit"

@@ -75,18 +75,18 @@ function GetRecordZone() {
 	    record_found=1
             current_ip=$(echo $i | jq '.content' | tr -d '"')
             if [[ "$current_ip" == "$ip" ]];  then 
-                    log "Ip in record is : $current_ip is up to date no update"
+                    log "Ip in record : $current_ip is up to date no update"
 		    exit 0
             else 
                     rec_id=$(echo $i | jq '.id' | tr -d '"')
 		    log "Updating record $name with Id : $rec_id"
                     UpdateDNSRecord "$rec_id"
-		    log "Ip Updated old ip : $current_ip   New ip : $ip"
+		    log "Ip updated old ip : $current_ip   New ip : $ip"
 		    exit 0
             fi
     fi
     done
-    if [ record_found == 0 ]; then 
+    if [ $record_found == 0 ]; then 
 	log "Enregistrement non trouvé"
 	CreateDNSRecord
     fi
@@ -97,7 +97,7 @@ function UpdateDNSRecord() {
 	updatedns_url="$base_url$dns_zone/$zone_id/records/$1"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\"}]"
 	log "url $updatedns_url Record -$record_content"
-	curl -X PUT $updatedns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+	curl -X PUT "$updatedns_url" -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
 	
@@ -106,7 +106,7 @@ function CreateDNSRecord() {
 	createdns_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url : $createdns_url   Record : $record_content"
-	curl -X POST $createdns_url -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+	curl -X POST "$createdns_url" -H $output_type -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
 function CheckParamIP() {

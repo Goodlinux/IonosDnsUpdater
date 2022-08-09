@@ -43,7 +43,7 @@ function log() {
 }
 
 function GetExtIpAdress() {
-	ip=$(curl -s https://ipinfo.io/ip)
+	ip=$(curl -s ifconfig.me)
 	log "Ip set to $ip." 
 }
 
@@ -144,9 +144,7 @@ while getopts "ha:ef:v" opt; do
 done
 
 # checks if ip was set and retrieves it if not
+log "Date : $(date) \n"
 CheckParamIP
 GetZoneId
 GetRecordZone
-#CreateDNSRecord
-
-log "This script is done and will exit"

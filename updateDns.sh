@@ -121,15 +121,14 @@ function CreateDNSRecord() {
 	log $createdns_url -H "accept: */*" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
 }
 
-function CheckIP() {
+function CheckParamIP() {
 	# check ip regex
 	if [[ $ip =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$ ]];
-	then
+	   then
 		log "Ip set to $ip" 
-	else
-		log "Adress isn't valid or set. 
-                     This script will search for the actual ip adress of this machine."
-		RetrieveIpAdress
+	   else
+		log "Adress isn't valid or set. This script will search for the actual ip adress of this machine."
+		GetExtIpAdress
 	fi
 }
 
@@ -141,23 +140,23 @@ function CheckIP() {
 while getopts "ha:ef:v" opt; do
      case $opt in
 		# display help
-			h) Help;;
+	h) Help;;
 		# ip adress
-            a) ip=$OPTARG;;
+        a) ip=$OPTARG;;
 		# show error codes
-			e) ErrorCodes exit;;
+	e) ErrorCodes exit;;
 		# redirect verbose output to file
-			f) redirect_mode=true && redirect_file=$OPTARG;;
+	f) redirect_mode=true && redirect_file=$OPTARG;;
 		# verbose mode
-            v) verbose_mode=true;;
+        v) verbose_mode=true;;
 		# invalid options
-			\?) echo "Error: Invalid options"
+	\?) echo "Error: Invalid options"
 	    exit 1;;
         esac
 done
 
 # checks if ip was set and retrieves it if not
-GetExtIpAdress
+CheckParamIP
 GetZoneId
 GetCustomerZone
 #CreateDNSRecord

@@ -6,11 +6,11 @@
 base_url="https://api.hosting.ionos.com/"
 curl_param="X-API-KEY:"
 dns_zone="dns/v1/zones"
-dns_records_start="dns/v1/"
-dns_records_end="/records/"
-zone="zones/"
+#dns_records_start="dns/v1/"
+#dns_records_end="/records/"
+#zone="zones/"
 output_type="accept: application/json"
-record_found=0
+content_type="Content-Type: application/json"
 
 ###################################
 ########## Functions ##############
@@ -72,30 +72,28 @@ function GetRecordZone() {
     if [[ $name = "$DOMAIN" ]];  then
             log "Matching $name record found."
 	    log "$record"
-	    record_found=1
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then 
                     log "Ip in record : $record_ip is up to date no update"
             else 
                     rec_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $name with Id : $rec_id"
-                    UpdateDNSRecord $rec_id
+                    UpdateDNSRecord
 		    log "Record ip updated old ip : $record_ip   New ip : $ip"
             fi
-    fi
-    done
-    if [ $record_found == 0 ]; then 
-	log "Enregistrement non trouvé"
+    else
+        log "Enregistrement non trouvé"
 	CreateDNSRecord
     fi
+    done
 }
 	
 function UpdateDNSRecord() {
 	log "Updating DNS Record."
-	updatedns_url="$base_url$dns_zone/$zone_id/records/$1"
-	record_content="[{\"content\":\"$ip\"}]"
+	update_url="$base_url$dns_zone/$zone_id/records/$rec_id"
+	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url $updatedns_url Record -$record_content"
-	curl -X PUT "$updatedns_url" -H "accept: application/json"  -H "$curl_param $API_KEY"  -H "Content-Type: application/json" -d "$record_content"
+	curl -X PUT "$update_url" -H $output_type  -H "$curl_param $API_KEY"  -H $content_type -d "$record_content"
 }
 
 	
@@ -104,7 +102,7 @@ function CreateDNSRecord() {
 	createdns_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url : $createdns_url   Record : $record_content"
-	curl -X POST "$createdns_url" -H "accept: application/json" -H "$curl_param $API_KEY" -H "Content-Type: application/json" -d "$record_content"
+	curl -X POST "$createdns_url" -H "$output_type" -H "$curl_param $API_KEY" -H $content_type -d "$record_content"
 
 #        createdns_url="$base_url$dns_zone/$zone_id/records" 
 #	record_content="[{\"name\":\"$domain\",\"type\":\"$dns_type\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"

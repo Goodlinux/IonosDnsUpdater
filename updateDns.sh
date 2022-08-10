@@ -39,6 +39,7 @@ function log() {
 	elif [ $verbose_mode ];
 	  then
 		echo $1
+		echo " "
 	fi
 }
 
@@ -48,7 +49,7 @@ function GetExtIpAdress() {
 }
 
 function GetZoneId() {
-    log "Retrieving zone id."
+    log "- Searching zone id."
     zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
     name=$(echo $zone_id | jq '.[] | .name?' );
@@ -62,7 +63,7 @@ function GetZoneId() {
 }
 
 function GetRecordZone() {
-    log "Retrieving dns records."
+    log "- Searching dns records."
     customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"	
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     log "Find some domain record."
@@ -71,7 +72,7 @@ function GetRecordZone() {
     name=$(echo $record | jq '.name' | tr -d '"')
     if [[ $name = "$DOMAIN" ]];  then
             log "Matching $name record found."
-	    log "$record"
+	    #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then 
                     log "Ip in record : $record_ip is up to date no update"
@@ -89,20 +90,20 @@ function GetRecordZone() {
 }
 	
 function UpdateDNSRecord() {
-	log "Updating DNS Record."
+	log "- Updating DNS Record."
 	update_url="$base_url$dns_zone/$zone_id/records/$rec_id"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url $updatedns_url Record -$record_content"
-	curl -X PUT "$update_url" -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content"
+	echo curl -X PUT "$update_url" -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content"
 }
 
 	
 function CreateDNSRecord() {
-	log "Creating DNS Record."
-	createdns_url="$base_url$dns_zone/$zone_id/records"
+	log "- Creating DNS Record."
+	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url : $createdns_url   Record : $record_content"
-	curl -X POST "$createdns_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
+	echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
 
 #        createdns_url="$base_url$dns_zone/$zone_id/records" 
 #	record_content="[{\"name\":\"$domain\",\"type\":\"$dns_type\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"

@@ -105,16 +105,11 @@ function CreateDNSRecord() {
 	log "url : $createdns_url   Record : $record_content"
 	echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
 
-#        createdns_url="$base_url$dns_zone/$zone_id/records" 
-#	record_content="[{\"name\":\"$domain\",\"type\":\"$dns_type\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-#	curl -X POST $createdns_url -H "accept: */*" -H "$curl_param $api_key" -H "Content-Type: application/json" -d "$record_content"
-
-
 }
 
 function CheckParamIP() {
 	# check if ip paraeter is valid or set
-	if [[ $ip =~ ^$ ]]; then
+	if [[ $ip == '' ]]; then
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
@@ -134,7 +129,7 @@ function CheckParamIP() {
 while getopts "ha:ef:v" opt; do                                                                                                                             
      case $opt in                                                                                                                                           
                 # display help                                                                                                                              
-        h) Help;;                                                                                                                                           
+        h) Help;;(                                                                                                                                           
                 # ip adress                                                                                                                                 
         a) ip=$OPTARG && log "- ip in param : $ip";;                                                                                                        
                 # show error codes                                                                                                                          

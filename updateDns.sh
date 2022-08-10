@@ -67,22 +67,20 @@ function GetRecordZone() {
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     log "Find some domain record."
     #log "$records"
-    echo $records | jq -c '.[]'  | while read i; do
-    name=$(echo $i | jq '.name' | tr -d '"')
-    if [[ $name = "$DOMAIN" || $name = "www.$DOMAIN" ]];  then
-            log "Matching $name record found. \n"
-	    log "$i \n"
+    echo $records | jq -c '.[]'  | while read record; do
+    name=$(echo $record | jq '.name' | tr -d '"')
+    if [[ $name = "$DOMAIN" ]];  then
+            log "Matching $name record found."
+	    log "$record"
 	    record_found=1
-            current_ip=$(echo $i | jq '.content' | tr -d '"')
-            if [[ "$current_ip" == "$ip" ]];  then 
-                    log "Ip in record : $current_ip is up to date no update"
-		    exit 0
+            record_ip=$(echo $record | jq '.content' | tr -d '"')
+            if [[ "$record_ip" == "$ip" ]];  then 
+                    log "Ip in record : $record_ip is up to date no update"
             else 
-                    rec_id=$(echo $i | jq '.id' | tr -d '"')
+                    rec_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $name with Id : $rec_id"
-                    UpdateDNSRecord "$rec_id"
-		    log "Ip updated old ip : $current_ip   New ip : $ip"
-		    exit 0
+                    UpdateDNSRecord $rec_id
+		    log "Record ip updated old ip : $record_ip   New ip : $ip"
             fi
     fi
     done

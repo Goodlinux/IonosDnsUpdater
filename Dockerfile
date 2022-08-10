@@ -22,6 +22,7 @@ RUN apk -U upgrade && apk add git curl apk-cron tzdata jq nano \
   && echo "echo 'Mise à jour ...'"                                         >> /usr/local/bin/entrypoint.sh  \
   && echo "apk -U upgrade "                                                >> /usr/local/bin/entrypoint.sh  \
   && echo "cd /opt/IonosDnsUpdater  && git pull --rebase"                  >> /usr/local/bin/entrypoint.sh  \
+  && echo "chmod +x /opt/IonosDnsUpdater/updatDns.sh"                      >> /usr/local/bin/entrypoint.sh  \
   && echo "echo 'lancement de cron ...'"                                   >> /usr/local/bin/entrypoint.sh  \
   && echo "crond -b "                                                      >> /usr/local/bin/entrypoint.sh  \
   && echo "/bin/sh"                                                        >> /usr/local/bin/entrypoint.sh  \

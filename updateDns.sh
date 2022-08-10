@@ -122,10 +122,10 @@ function CheckParamIP() {
 	fi
 }
 
-###################################
-########## START ##################
-###################################
-# Get Flags                                                                                                                                                 
+#################
+##### START #####
+#################
+# Get Params                                                                                                                                                 
 while getopts "ha:ef:v" opt; do                                                                                                                             
      case $opt in                                                                                                                                           
                 # display help                                                                                                                              

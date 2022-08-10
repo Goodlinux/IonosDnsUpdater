@@ -131,25 +131,24 @@ function CheckParamIP() {
 ###################################
 ########## START ##################
 ###################################
-
-# Get Flags
-while getopts "ha:ef:v" opt; do
-     case $opt in
-		# display help
-	h) Help;;
-		# ip adress
-        a) ip=$OPTARG;;
-		# show error codes
-	e) ErrorCodes exit;;
-		# redirect verbose output to file
-	f) redirect_mode=true && redirect_file=$OPTARG;;
-		# verbose mode
-        v) verbose_mode=true;;
-		# invalid options
-	\?) echo "Error: Invalid options"
-	    exit 1;;
-        esac
-done
+# Get Flags                                                                                                                                                 
+while getopts "ha:ef:v" opt; do                                                                                                                             
+     case $opt in                                                                                                                                           
+                # display help                                                                                                                              
+        h) Help;;                                                                                                                                           
+                # ip adress                                                                                                                                 
+        a) ip=$OPTARG && log "- ip in param : $ip";;                                                                                                        
+                # show error codes                                                                                                                          
+        e) ErrorCodes exit;;                                                                                                                                
+                # redirect verbose output to file                                                                                                           
+        f) redirect_mode=true && redirect_file=$OPTARG;;                                                                                                    
+                # verbose mode                                                                                                                              
+        v) verbose_mode=true && log "- verbose mode activated";;                                                                                            
+                # invalid options                                                                                                                           
+        \?) echo "Error: Invalid options"                                                                                                                   
+            exit 1;;                                                                                                                                        
+        esac                                                                                                                                                
+done 
 
 # checks if ip was set and retrieves it if not
 log "Date : $(date) \n"

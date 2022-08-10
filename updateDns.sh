@@ -44,7 +44,7 @@ function log() {
 
 function GetExtIpAdress() {
 	ip=$(curl -s ifconfig.me)
-	log "Ip set to $ip." 
+	log "Get ip from external : $ip." 
 }
 
 function GetZoneId() {
@@ -93,7 +93,7 @@ function UpdateDNSRecord() {
 	update_url="$base_url$dns_zone/$zone_id/records/$rec_id"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url $updatedns_url Record -$record_content"
-	curl -X PUT "$update_url" -H $output_type  -H "$curl_param $API_KEY"  -H $content_type -d "$record_content"
+	curl -X PUT "$update_url" -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content"
 }
 
 	
@@ -102,7 +102,7 @@ function CreateDNSRecord() {
 	createdns_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	log "url : $createdns_url   Record : $record_content"
-	curl -X POST "$createdns_url" -H "$output_type" -H "$curl_param $API_KEY" -H $content_type -d "$record_content"
+	curl -X POST "$createdns_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
 
 #        createdns_url="$base_url$dns_zone/$zone_id/records" 
 #	record_content="[{\"name\":\"$domain\",\"type\":\"$dns_type\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
@@ -114,14 +114,14 @@ function CreateDNSRecord() {
 function CheckParamIP() {
 	# check if ip paraeter is valid or set
 	if [[ '$ip' == '' ]]; then
-		log "No Ip in parameter chearch for actual external Ip of this network"
+		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
 		if [[ $ip == $(echo $ip | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.
 (25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' ) ]]; then                                                                                                          
-			log "Ip $ip is valid, Setting ip to $ip" 
+			log "Ip : $ip is valid." 
 	   	else
-			log "Ip isn't valid or set. This script will search for the actual ip adress of this machine."
+			log "ip isn't valid. search for actual external ip of this network"
 			GetExtIpAdress
 		fi
 	fi

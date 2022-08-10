@@ -118,8 +118,10 @@ function CheckParamIP() {
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
-		if [[ $ip == $(echo $ip | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.
-(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' ) ]]; then                                                                                                          
+		#if [[ $ip == $(echo $ip | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.
+#(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' ) ]]; then   
+
+	if [[ $ip =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$ ]]; then
 			log "Ip : $ip is valid." 
 	   	else
 			log "ip isn't valid. search for actual external ip of this network"

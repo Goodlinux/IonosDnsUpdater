@@ -8,7 +8,7 @@ MAINTAINER Ludovic MAILLET <Ludoivc@maillet.me>
 # Rendre les batch executables
 
 ENV API_KEY=xxx.yyyy  \
-	DNS_TYPE=A  \
+    DNS_TYPE=A  \
     DOMAIN=test.maillet.me \ 
     TZ=Europe/Paris
 

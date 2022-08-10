@@ -116,13 +116,18 @@ function CreateDNSRecord() {
 }
 
 function CheckParamIP() {
-	# check ip regex
-	#if [[ $ip =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$ ]]; then
-	if [! '$ip' == '' ]; then 
-		log "Setting ip to $ip" 
-	   else
-		log "Adress isn't valid or set. This script will search for the actual ip adress of this machine."
+	# check if ip paraeter is valid or set
+	if [[ '$ip' == '' ]]; then
+		log "No Ip in parameter chearch for actual external Ip of this network"
 		GetExtIpAdress
+	else
+		if [[ $ip == $(echo $ip | grep -E -o '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.
+(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)' ) ]]; then                                                                                                          
+			log "Ip $ip is valid, Setting ip to $ip" 
+	   	else
+			log "Ip isn't valid or set. This script will search for the actual ip adress of this machine."
+			GetExtIpAdress
+		fi
 	fi
 }
 

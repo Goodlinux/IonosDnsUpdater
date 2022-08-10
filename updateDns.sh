@@ -153,7 +153,7 @@ while getopts "ha:ef:v" opt; do
 done 
 
 # checks if ip was set and retrieves it if not
-log "Date : $(date) \n"
+log "Date : $(date)"
 CheckParamIP
 GetZoneId
 GetRecordZone

@@ -1,7 +1,7 @@
 #! /bin/sh
-###################################
-########## Variables ##############
-###################################
+########################
+###### Variables #######
+########################
 # vars
 base_url="https://api.hosting.ionos.com/"
 curl_param="X-API-KEY:"
@@ -12,9 +12,9 @@ dns_zone="dns/v1/zones"
 output_type="accept: application/json"
 content_type="Content-Type: application/json"
 
-###################################
-########## Functions ##############
-###################################
+#########################
+##### Functions #########
+#########################
 
 function Help() {
      # Show Help
@@ -144,8 +144,10 @@ while getopts "ha:ef:v" opt; do
         esac                                                                                                                                                
 done 
 
-# checks if ip was set and retrieves it if not
 log "Date : $(date)"
+# checks if ip was set and retrieves it if not
 CheckParamIP
+# Retrieve DNS Zone Id
 #GetZoneId
+# Retrieve Record Id and Create or Update DNS
 #GetRecordZone

@@ -147,5 +147,5 @@ done
 # checks if ip was set and retrieves it if not
 log "Date : $(date)"
 CheckParamIP
-GetZoneId
-GetRecordZone
+#GetZoneId
+#GetRecordZone

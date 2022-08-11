@@ -10,7 +10,7 @@ output_type="accept: application/json"
 content_type="Content-Type: application/json"
 
 #######################
-##### Functions #########
+##### Functions #######
 #######################
 
 function Help() 
@@ -27,6 +27,7 @@ function Help()
 
 function ErrorCodes() 
 {
+	# Show Error codes
 	echo "Error Codes: "
 	echo "1	Invalid flags or reference"
 	echo "2	ZoneId was not found"
@@ -81,16 +82,16 @@ function GetRecordZone()
                     log "Ip in record : $record_ip is up to date no update"
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
-		            log "Updating record $record_name with Id : $rec_id"
+		    log "Updating record $record_name with Id : $rec_id"
                     UpdateDNSRecord
-		            if [[ $? == 0 ]]; then 
-						log "Record ip updated old ip : $record_ip   New ip : $ip"
-					fi
+		    if [[ $? == 0 ]]; then 
+		        log "Record ip updated old ip : $record_ip   New ip : $ip"
+		    fi
             fi
-			#Get out of the While with ERR 1 mean we found the record
-			exit 1
-			break
-	    fi
+		    #Get out of the While with ERR 1 mean we found the record
+		    exit 1
+		    break
+	fi
     done 
     if [[ ! $? == 1 ]]; then
 	    log "Enregistrement non trouvé"
@@ -104,7 +105,7 @@ function UpdateDNSRecord()
 	update_url="$base_url$dns_zone/$zone_id/records/$record_id"
 	record_content="{\"content\":\"$ip\"}"
 	log "Record -$record_content"
-	return=$(curl -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
+	return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [[ ! $err == ''  ]]; then
@@ -113,7 +114,6 @@ function UpdateDNSRecord()
 	fi
 }
 
-
 function CreateDNSRecord() 
 {
 	log "- Creating DNS Record $DOMAIN."
@@ -121,7 +121,7 @@ function CreateDNSRecord()
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
 	#log "url : $createdns_url   Record : $record_content"
 	#echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
-    return=$(curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+        return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [[ ! ($err == "" || $err == "null" ) ]]; then
@@ -169,9 +169,6 @@ while getopts "ha:ef:v" opt; do
 done
 
 log "Date : $(date)"
-log "Domain : $DOMAIN"
-log "DNS_Type : $DNS_TYPE"
-log "API Key : $API_KEY"
 # checks if ip was set and retrieves it if not
 CheckParamIP
 # Retrieve DNS Zone Id

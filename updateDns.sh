@@ -37,8 +37,7 @@ function log()
 {
 	if [ $redirect_mode ]; 	then
 		echo $1 >> $redirect_file
-	elif [ $verbose_mode ];> > /dev/stdout
-	  then
+	elif [ $verbose_mode ]; then
 		echo $1 > /dev/stdout
 	fi
 }
@@ -79,7 +78,7 @@ function GetRecordZone()
 	        #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then
-                    echo "Ip in $record_name : $record_ip is up to date no update" > /dev/stdout
+                    echo "Ip in $record_name : $record_ip is already up to date" > /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $record_name with Id : $rec_id"

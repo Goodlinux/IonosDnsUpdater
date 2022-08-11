@@ -1,7 +1,7 @@
-# IonosDnsUpdater
-Update DNS by API in Shell
-# DnsUpdater 
-[![domainconnect](https://img.shields.io/static/v1?label=based_on&message=DomainConnectDDNS-Python&color=blue)](link=https://github.com/Domain-Connect/DomainConnectDDNS-Python,float="left")
+# IonosDnsUpdater 
+[![licences](https://img.shields.io/static/v1?label=based_on&message=IonosApi&color=blue)](link=hhttps://developer.hosting.ionos.fr/docs/dns,float="left")
+
+
 
 DSN Update for dns provider like ionos, looks like a DynDSN 
 

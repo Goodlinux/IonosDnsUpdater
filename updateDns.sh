@@ -6,17 +6,15 @@
 base_url="https://api.hosting.ionos.com/"
 curl_param="X-API-KEY:"
 dns_zone="dns/v1/zones"
-#dns_records_start="dns/v1/"
-#dns_records_end="/records/"
-#zone="zones/"
 output_type="accept: application/json"
 content_type="Content-Type: application/json"
 
-#########################
+#######################
 ##### Functions #########
-#########################
+#######################
 
-function Help() {
+function Help() 
+{
      # Show Help
     echo "Syntax update.sh [-a|-e|-f|-v]."
     echo "options:"
@@ -27,28 +25,31 @@ function Help() {
     echo
 }
 
-function ErrorCodes() {
+function ErrorCodes() 
+{
 	echo "Error Codes: "
 	echo "1	Invalid flags or reference"
 	echo "2	ZoneId was not found"
 }
 
-function log() {
+function log() 
+{
 	if [ $redirect_mode ]; 	then
 		echo $1 >> $redirect_file
 	elif [ $verbose_mode ];
 	  then
 		echo $1
-		echo " "
 	fi
 }
 
-function GetExtIpAdress() {
+function GetExtIpAdress() 
+{
 	ip=$(curl -s ifconfig.me)
 	log "Get ip from external : $ip."
 }
 
-function GetZoneId() {
+function GetZoneId() 
+{
     log "- Searching zone id."
     zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
@@ -62,54 +63,77 @@ function GetZoneId() {
     log "Zoneid is $zone_id."
 }
 
-function GetRecordZone() {
+function GetRecordZone() 
+{
     log "- Searching dns records."
-    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE
+    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
-    log "Find some domain record."
+    #log "Find some domain record."
     #log "$records"
     echo $records | jq -c '.[]'  | while read record; do
-    name=$(echo $record | jq '.name' | tr -d '"')
-    if [[ $name = "$DOMAIN" ]];  then
-            log "Matching $name record found."
-	    #log "$record"
+        record_name=$(echo $record | jq '.name' | tr -d '"')
+		#echo "name : $record_name"
+        if [[ $record_name == $DOMAIN ]];  then
+            log "Matching $record_name record found."
+	        #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then
                     log "Ip in record : $record_ip is up to date no update"
             else
-                    rec_id=$(echo $record | jq '.id' | tr -d '"')
-		    log "Updating record $name with Id : $rec_id"
+                    record_id=$(echo $record | jq '.id' | tr -d '"')
+		            log "Updating record $record_name with Id : $rec_id"
                     UpdateDNSRecord
-		    log "Record ip updated old ip : $record_ip   New ip : $ip"
+		            if [[ $? == 0 ]]; then 
+						log "Record ip updated old ip : $record_ip   New ip : $ip"
+					fi
             fi
-    else
-        log "Enregistrement non trouvé"
-	CreateDNSRecord
+			#Get out of the While with ERR 1 mean we found the record
+			exit 1
+			break
+	    fi
+    done 
+    if [[ ! $? == 1 ]]; then
+	    log "Enregistrement non trouvé"
+	    CreateDNSRecord
     fi
-    done
 }
 
-function UpdateDNSRecord() {
-	log "- Updating DNS Record."
-	update_url="$base_url$dns_zone/$zone_id/records/$rec_id"
-	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-	log "url $updatedns_url Record -$record_content"
-	echo curl -X PUT "$update_url" -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content"
+function UpdateDNSRecord() 
+{
+	log "- Updating DNS Record. Record Id :  $record_id"
+	update_url="$base_url$dns_zone/$zone_id/records/$record_id"
+	record_content="{\"content\":\"$ip\"}"
+	log "Record -$record_content"
+	return=$(curl -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
+	err=$(echo $return | jq '.[] | .code?' );
+	msg=$(echo $return | jq '.[] | .message?' );
+	if [[ ! $err == ''  ]]; then
+	    log "update error, $err : $msg"
+		exit 2
+	fi
 }
 
 
-function CreateDNSRecord() {
-	log "- Creating DNS Record."
+function CreateDNSRecord() 
+{
+	log "- Creating DNS Record $DOMAIN."
 	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-	log "url : $createdns_url   Record : $record_content"
-	echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
-
+	#log "url : $createdns_url   Record : $record_content"
+	#echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
+    return=$(curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+	err=$(echo $return | jq '.[] | .code?' );
+	msg=$(echo $return | jq '.[] | .message?' );
+	if [[ ! ($err == "" || $err == "null" ) ]]; then
+	    log "create error, $err : $msg"
+		exit 2
+	fi
 }
 
-function CheckParamIP() {
+function CheckParamIP() 
+{
 	# check if ip paraeter is valid or set
-	if [[ $ip == '' ]]; then
+	if [[ $ip == "" ]]; then
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
@@ -129,7 +153,7 @@ function CheckParamIP() {
 while getopts "ha:ef:v" opt; do
      case $opt in
                 # display help
-        h) Help;;(
+        h) Help;;
                 # ip adress
         a) ip=$OPTARG && log "- ip in param : $ip";;
                 # show error codes
@@ -145,10 +169,12 @@ while getopts "ha:ef:v" opt; do
 done
 
 log "Date : $(date)"
+log "Domain : $DOMAIN"
+log "DNS_Type : $DNS_TYPE"
+log "API Key : $API_KEY"
 # checks if ip was set and retrieves it if not
 CheckParamIP
 # Retrieve DNS Zone Id
-#GetZoneId
+GetZoneId
 # Retrieve Record Id and Create or Update DNS
-#GetRecordZone
-# Added date log
+GetRecordZone

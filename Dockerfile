@@ -6,7 +6,7 @@ ENV API_KEY=xxx.yyyy  \
     DOMAIN=test.maillet.me \ 
     TZ=Europe/Paris
 
-RUN apk -U upgrade && apk add curl apk-cron tzdata jq bash nano \ 
+RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 
   && cd /usr/local/bin/ && curl -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh \
   && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \ 
   && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg.sh \ 

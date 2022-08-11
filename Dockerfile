@@ -15,20 +15,20 @@ ENV API_KEY=xxx.yyyy  \
 RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 
   && cd /usr/local/bin/ && curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh \
   && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >  /etc/timezone \ 
-  && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg \ 
-  && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg \  
-  && echo "curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh" >> /usr/local/bin/updtPkg \
-  && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg \
+  && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg.sh \ 
+  && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg.sh \  
+  && echo "curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh" >> /usr/local/bin/updtPkg.sh \
+  && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg.sh \
   && echo '*/5     *       *       *       *       /usr/local/bin/updateDns.sh' >> /etc/crontabs/root \
-  && echo '00     1       *       *       sun       /usr/local/bin/updtPkg'     >> /etc/crontabs/root \ 
-  && echo "#! /bin/sh"                                                     > /usr/local/bin/entrypoint.sh \
-  && echo "echo 'Mise à jour ...'"                                         >> /usr/local/bin/entrypoint.sh  \
-  && echo "apk -U upgrade "                                                >> /usr/local/bin/entrypoint.sh  \
-  && echo "cd /opt/IonosDnsUpdater  && git pull --rebase"                  >> /usr/local/bin/entrypoint.sh  \
-  && echo "chmod +x /opt/IonosDnsUpdater/updatDns.sh"                      >> /usr/local/bin/entrypoint.sh  \
-  && echo "echo 'lancement de cron ...'"                                   >> /usr/local/bin/entrypoint.sh  \
-  && echo "crond -b "                                                      >> /usr/local/bin/entrypoint.sh  \
-  && echo "/bin/sh"                                                        >> /usr/local/bin/entrypoint.sh  \
+  && echo '00     1       *       *       sun       /usr/local/bin/updtPkg.sh'     >> /etc/crontabs/root \ 
+  && echo "#! /bin/sh"                                                                     > /usr/local/bin/entrypoint.sh \
+  && echo "echo 'Mise à jour ...'"                                                         >> /usr/local/bin/entrypoint.sh  \
+  && echo "apk -U upgrade "                                                                >> /usr/local/bin/entrypoint.sh  \
+  && echo "cd /usr/local/bin/"                                                             >> /usr/local/bin/entrypoint.sh \
+  && echo "curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh"  >> /usr/local/bin/entrypoint.sh  \
+  && echo "echo 'lancement de cron ...'"                                                   >> /usr/local/bin/entrypoint.sh  \
+  && echo "crond -b "                                                                      >> /usr/local/bin/entrypoint.sh  \
+  && echo "/bin/sh"                                                                        >> /usr/local/bin/entrypoint.sh  \
   && chmod a+x /usr/local/bin/*
 # Lancement du daemon cron
 CMD /usr/local/bin/entrypoint.sh

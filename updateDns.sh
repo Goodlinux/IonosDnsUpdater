@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 ########################
 ###### Variables #######
 ########################
@@ -13,7 +13,7 @@ content_type="Content-Type: application/json"
 ##### Functions #######
 #######################
 
-function Help() 
+Help() 
 {
      # Show Help
     echo "Syntax update.sh [-a|-e|-f|-v]."
@@ -25,7 +25,7 @@ function Help()
     echo
 }
 
-function ErrorCodes() 
+ErrorCodes() 
 {
 	# Show Error codes
 	echo "Error Codes: "
@@ -33,28 +33,28 @@ function ErrorCodes()
 	echo "2	ZoneId was not found"
 }
 
-function log() 
+log() 
 {
 	if [ $redirect_mode ]; 	then
-		echo $1 >> $redirect_file
+		echo "$1" >> "$redirect_file"
 	elif [ $verbose_mode ]; then
-		echo $1 > /dev/stdout
+		echo "$1" > /dev/stdout
 	fi
 }
 
-function GetExtIpAdress() 
+GetExtIpAdress() 
 {
 	ip=$(curl -s ifconfig.me)
 	log "Get ip from external : $ip."
 }
 
-function GetZoneId() 
+GetZoneId() 
 {
     log "- Searching zone id."
     zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
     name=$(echo $zone_id | jq '.[] | .name?' );
-    if [[ "$name" == "" ]]; then
+    if [ "$name" = "" ]; then
 	    # exit with error
 	    echo "Error: $zone_id | jq '.[]'" > /dev/stdout
 	    exit 2
@@ -63,27 +63,24 @@ function GetZoneId()
     log "Zoneid is $zone_id."
 }
 
-function GetRecordZone() 
+GetRecordZone() 
 {
     log "- Searching dns records."
     customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
-    #log "Find some domain record."
-    #log "$records"
     echo $records | jq -c '.[]'  | while read record; do
         record_name=$(echo $record | jq '.name' | tr -d '"')
 		#echo "name : $record_name"
-        if [[ $record_name == $DOMAIN ]];  then
+        if [ "$record_name" = "$DOMAIN" ];  then
             log "Matching $record_name record found."
-	        #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
-            if [[ "$record_ip" == "$ip" ]];  then
+            if [ "$record_ip" = "$ip" ];  then
                     echo "Ip in $record_name : $record_ip is already up to date" > /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
-		    log "Updating record $record_name with Id : $rec_id"
+		    log "Updating record $record_name with Id : $record_id"
                     UpdateDNSRecord
-		    if [[ $? == 0 ]]; then 
+		    if [ $? = 0 ]; then 
 		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" > /dev/stdout
 		    fi
             fi
@@ -92,13 +89,13 @@ function GetRecordZone()
 		    break
 	fi
     done 
-    if [[ ! $? == 1 ]]; then
+    if [ ! $? = 1 ]; then
 	    log "Enregistrement non trouvé"
 	    CreateDNSRecord
     fi
 }
 
-function UpdateDNSRecord() 
+UpdateDNSRecord() 
 {
 	log "- Updating DNS Record. Record Id :  $record_id"
 	update_url="$base_url$dns_zone/$zone_id/records/$record_id"
@@ -107,36 +104,36 @@ function UpdateDNSRecord()
 	return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
-	if [[ ! $err == ''  ]]; then
+	if [ ! "$err" = ""  ]; then
 	    log "update error, $err : $msg"
 		exit 2
 	fi
 }
 
-function CreateDNSRecord() 
+CreateDNSRecord() 
 {
 	log "- Creating DNS Record $DOMAIN."
 	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-	#log "url : $createdns_url   Record : $record_content"
-	#echo curl -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content"
-        return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+    return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
-	if [[ ! ($err == "" || $err == "null" ) ]]; then
-	    log "create error, $err : $msg"
+	if [ "$err" = "" ] || [ "$err" = "null"  ]; then
+	    log "creation successfull"
+	else
+	    log "creation error, $err : $msg"
 		exit 2
 	fi
 }
 
-function CheckParamIP() 
+CheckParamIP() 
 {
 	# check if ip paraeter is valid or set
-	if [[ $ip == "" ]]; then
+	if [ "$ip" = "" ]; then
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
-            if [[ $ip == $(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$') ]];  then
+         if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
         	log "Ip : $ip is valid."
 	    else
 		log "ip isn't valid. search for actual external ip of this network"

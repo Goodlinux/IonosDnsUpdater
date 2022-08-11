@@ -2,18 +2,14 @@
 
 [![licences](https://img.shields.io/static/v1?label=based_on&message=IonosApi&color=blue)](link=https://developer.hosting.ionos.fr/docs/dns,float="left")
 
-[![git](https://img.shields.io/static/v1?label=based_on&message=zipsme&color=blue)](https://github.com/zipsme/zipsme)
+[![alpine](https://img.shields.io/static/v1?label=using&message=alpine&color=orange)](https://alpinelinux.org)
 
 DSN Update for dns provider ionos, looks like a DynDSN 
 running in a docker container
-docker image available :
-[![docker](https://img.shields.io/static/v1?label=docker&message=Image_Docker_IonosDnsUpdater&color=green)](link=https://https://registry.hub.docker.com/r/goodlinux/ionosdnsupdater/,float="left")
+docker image available : 
 
+[![docker](https://img.shields.io/static/v1?label=docker&message=dockerhub&color=green)](https://registry.hub.docker.com/r/goodlinux/ionosdnsupdater)
 
- IONOS DNS Record Updater
- About the Project
- 
- The script take into account certain parameter
  
 # Getting Started
  Prerequisites

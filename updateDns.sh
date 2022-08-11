@@ -37,9 +37,9 @@ function log()
 {
 	if [ $redirect_mode ]; 	then
 		echo $1 >> $redirect_file
-	elif [ $verbose_mode ];
+	elif [ $verbose_mode ];> > /dev/stdout
 	  then
-		echo $1
+		echo $1 > /dev/stdout
 	fi
 }
 
@@ -57,7 +57,7 @@ function GetZoneId()
     name=$(echo $zone_id | jq '.[] | .name?' );
     if [[ "$name" == "" ]]; then
 	    # exit with error
-	    echo "Error: $zone_id | jq '.[]'"
+	    echo "Error: $zone_id | jq '.[]'" > /dev/stdout
 	    exit 2
     fi
     zone_id=$(echo $zone_id | jq '.[] | .id?' | tr -d '"');
@@ -79,13 +79,13 @@ function GetRecordZone()
 	        #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then
-                    echo "Ip in $record_name : $record_ip is up to date no update"
+                    echo "Ip in $record_name : $record_ip is up to date no update" > /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $record_name with Id : $rec_id"
                     UpdateDNSRecord
 		    if [[ $? == 0 ]]; then 
-		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip"
+		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" > /dev/stdout
 		    fi
             fi
 		    #Get out of the While with ERR 1 mean we found the record
@@ -168,9 +168,10 @@ while getopts "ha:ef:v" opt; do
         esac
 done
 
-echo "Date : $(date)"
 # checks if ip was set and retrieves it if not
 CheckParamIP
+echo "Date : $(date)" > /dev/stdout
+echo "Updating : $DOMAIN with ip : $ip" > /dev/stdout
 # Retrieve DNS Zone Id
 GetZoneId
 # Retrieve Record Id and Create or Update DNS

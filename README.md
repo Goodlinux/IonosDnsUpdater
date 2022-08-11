@@ -17,12 +17,12 @@ docker image available :
  https://developer.hosting.ionos.fr/docs/getstarted
  
  
-# ENV VARIABLES  
+# ENV VARIABLES FOR DOCKER CONTAINER  
  
- API_KEY = ccc.secret          ' put the Api code and secret you have retrieve from ionos  
- DOMAIN = www.mydomain.ext     ' name of the domain/subdomain to update  
- DNS_TYPE = A                  ' DNS record type   
- TZ=Europe/Paris               ' Time zone of the container
+ API_KEY = ccc.secret           ' put the Api code and secret you have retrieve from ionos 
+ DOMAIN = www.mydomain.ext      ' name of the domain/subdomain to update   
+ DNS_TYPE = A                   ' DNS record type    
+ TZ=Europe/Paris                ' Time zone of the container  
   
  
  License

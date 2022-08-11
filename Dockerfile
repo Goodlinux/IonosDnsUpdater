@@ -12,12 +12,15 @@ ENV API_KEY=xxx.yyyy  \
     DOMAIN=test.maillet.me \ 
     TZ=Europe/Paris
 
-RUN apk -U upgrade && apk add git curl apk-cron tzdata jq nano \ 
-  && cd /opt && git clone https://github.com/Goodlinux/IonosDnsUpdater.git && chmod a+x /opt/IonosDnsUpdater/updateDns.sh \
+RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 
+  && cd /usr/local/bin/ && curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh \
   && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >  /etc/timezone \ 
-  && echo "apk -U upgrade && cd /opt/IonosDnsUpdater && git pull" > /usr/local/bin/updtPkg \ 
-  && echo '*/5     *       *       *       *       /opt/IonosDnsUpdater/updateDns.sh' >> /etc/crontabs/root \
-  && echo '00     1       *       *       sun       /usr/local/bin/updtPkg' >> /etc/crontabs/root \ 
+  && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg \ 
+  && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg \  
+  && echo "curl -O https://github.com/Goodlinux/IonosDnsUpdater/blob/master/updateDns.sh" >> /usr/local/bin/updtPkg \
+  && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg \
+  && echo '*/5     *       *       *       *       /usr/local/bin/updateDns.sh' >> /etc/crontabs/root \
+  && echo '00     1       *       *       sun       /usr/local/bin/updtPkg'     >> /etc/crontabs/root \ 
   && echo "#! /bin/sh"                                                     > /usr/local/bin/entrypoint.sh \
   && echo "echo 'Mise à jour ...'"                                         >> /usr/local/bin/entrypoint.sh  \
   && echo "apk -U upgrade "                                                >> /usr/local/bin/entrypoint.sh  \

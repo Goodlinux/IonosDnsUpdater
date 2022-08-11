@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 ########################
 ###### Variables #######
 ########################
@@ -79,13 +79,13 @@ function GetRecordZone()
 	        #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [[ "$record_ip" == "$ip" ]];  then
-                    log "Ip in record : $record_ip is up to date no update"
+                    echo "Ip in $record_name : $record_ip is up to date no update"
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $record_name with Id : $rec_id"
                     UpdateDNSRecord
 		    if [[ $? == 0 ]]; then 
-		        log "Record ip updated old ip : $record_ip   New ip : $ip"
+		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip"
 		    fi
             fi
 		    #Get out of the While with ERR 1 mean we found the record
@@ -168,7 +168,7 @@ while getopts "ha:ef:v" opt; do
         esac
 done
 
-log "Date : $(date)"
+echo "Date : $(date)"
 # checks if ip was set and retrieves it if not
 CheckParamIP
 # Retrieve DNS Zone Id

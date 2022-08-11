@@ -45,7 +45,7 @@ function log() {
 
 function GetExtIpAdress() {
 	ip=$(curl -s ifconfig.me)
-	log "Get ip from external : $ip." 
+	log "Get ip from external : $ip."
 }
 
 function GetZoneId() {
@@ -53,8 +53,8 @@ function GetZoneId() {
     zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
     name=$(echo $zone_id | jq '.[] | .name?' );
-    if [[ "$name" == "" ]]; then 
-	    # exit with error 
+    if [[ "$name" == "" ]]; then
+	    # exit with error
 	    echo "Error: $zone_id | jq '.[]'"
 	    exit 2
     fi
@@ -64,7 +64,7 @@ function GetZoneId() {
 
 function GetRecordZone() {
     log "- Searching dns records."
-    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"	
+    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     log "Find some domain record."
     #log "$records"
@@ -74,9 +74,9 @@ function GetRecordZone() {
             log "Matching $name record found."
 	    #log "$record"
             record_ip=$(echo $record | jq '.content' | tr -d '"')
-            if [[ "$record_ip" == "$ip" ]];  then 
+            if [[ "$record_ip" == "$ip" ]];  then
                     log "Ip in record : $record_ip is up to date no update"
-            else 
+            else
                     rec_id=$(echo $record | jq '.id' | tr -d '"')
 		    log "Updating record $name with Id : $rec_id"
                     UpdateDNSRecord
@@ -88,7 +88,7 @@ function GetRecordZone() {
     fi
     done
 }
-	
+
 function UpdateDNSRecord() {
 	log "- Updating DNS Record."
 	update_url="$base_url$dns_zone/$zone_id/records/$rec_id"
@@ -97,7 +97,7 @@ function UpdateDNSRecord() {
 	echo curl -X PUT "$update_url" -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content"
 }
 
-	
+
 function CreateDNSRecord() {
 	log "- Creating DNS Record."
 	create_url="$base_url$dns_zone/$zone_id/records"
@@ -113,8 +113,8 @@ function CheckParamIP() {
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
-            if [[ $ip == $(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$') ]];  then 
-        	log "Ip : $ip is valid." 
+            if [[ $ip == $(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$') ]];  then
+        	log "Ip : $ip is valid."
 	    else
 		log "ip isn't valid. search for actual external ip of this network"
 		GetExtIpAdress
@@ -125,24 +125,24 @@ function CheckParamIP() {
 #################
 ##### START #####
 #################
-# Get Params                                                                                                                                                 
-while getopts "ha:ef:v" opt; do                                                                                                                             
-     case $opt in                                                                                                                                           
-                # display help                                                                                                                              
-        h) Help;;( 
-                # ip adress 
-        a) ip=$OPTARG && log "- ip in param : $ip";; 
-                # show error codes 
-        e) ErrorCodes exit;;      
-                # redirect verbose output to file 
-        f) redirect_mode=true && redirect_file=$OPTARG;;  
-                # verbose mode 
-        v) verbose_mode=true && log "- verbose mode activated";;  
-                # invalid options  
-        \?) echo "Error: Invalid options" 
-            exit 1;;   
-        esac  
-done 
+# Get Params
+while getopts "ha:ef:v" opt; do
+     case $opt in
+                # display help
+        h) Help;;(
+                # ip adress
+        a) ip=$OPTARG && log "- ip in param : $ip";;
+                # show error codes
+        e) ErrorCodes exit;;
+                # redirect verbose output to file
+        f) redirect_mode=true && redirect_file=$OPTARG;;
+                # verbose mode
+        v) verbose_mode=true && log "- verbose mode activated";;
+                # invalid options
+        \?) echo "Error: Invalid options"
+            exit 1;;
+        esac
+done
 
 log "Date : $(date)"
 # checks if ip was set and retrieves it if not
@@ -151,3 +151,4 @@ CheckParamIP
 #GetZoneId
 # Retrieve Record Id and Create or Update DNS
 #GetRecordZone
+# Added date log

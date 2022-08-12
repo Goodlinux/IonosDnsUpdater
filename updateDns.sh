@@ -38,7 +38,7 @@ log()
 	if [ $redirect_mode ]; 	then
 		echo "$1" >> "$redirect_file"
 	elif [ $verbose_mode ]; then
-		echo "$1" > /dev/stdout
+		echo "$1" >> /dev/stdout
 	fi
 }
 
@@ -56,7 +56,7 @@ GetZoneId()
     name=$(echo $zone_id | jq '.[] | .name?' );
     if [ "$name" = "" ]; then
 	    # exit with error
-	    echo "Error: $zone_id | jq '.[]'" > /dev/stdout
+	    echo "Error: $zone_id | jq '.[]'" >> /dev/stdout
 	    exit 2
     fi
     zone_id=$(echo $zone_id | jq '.[] | .id?' | tr -d '"');
@@ -75,18 +75,18 @@ GetRecordZone()
             log "Matching $record_name record found."
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [ "$record_ip" = "$ip" ];  then
-                    echo "Ip in $record_name : $record_ip is already up to date" > /dev/stdout
+                    echo "Ip in $record_name : $record_ip is already up to date" >> /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
-		    log "Updating record $record_name with Id : $record_id"
+                    log "Updating record $record_name with Id : $record_id"
                     UpdateDNSRecord
 		    if [ $? = 0 ]; then 
-		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" > /dev/stdout
+		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
 		    fi
-            fi
+        fi
 		    #Get out of the While with ERR 1 mean we found the record
-		    exit 1
-		    break
+		exit 1
+		break
 	fi
     done 
     if [ ! $? = 1 ]; then
@@ -136,9 +136,9 @@ CheckParamIP()
          if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
         	log "Ip : $ip is valid."
 	    else
-		log "ip isn't valid. search for actual external ip of this network"
-		GetExtIpAdress
-            fi
+            log "ip isn't valid. search for actual external ip of this network"
+            GetExtIpAdress
+        fi
 	fi
 }
 
@@ -166,8 +166,8 @@ done
 
 # checks if ip was set and retrieves it if not
 CheckParamIP
-echo "Date : $(date)" > /dev/stdout
-echo "Updating : $DOMAIN with ip : $ip" > /dev/stdout
+echo "Date : $(date)" >> /dev/stdout
+echo "Updating : $DOMAIN with ip : $ip" >> /dev/stdout
 # Retrieve DNS Zone Id
 GetZoneId
 # Retrieve Record Id and Create or Update DNS

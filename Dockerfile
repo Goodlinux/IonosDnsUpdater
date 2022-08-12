@@ -4,6 +4,7 @@ MAINTAINER Ludovic MAILLET <Ludoivc@maillet.me>
 ENV API_KEY=xxx.yyyy  \
     DNS_TYPE=A  \
     DOMAIN=test.maillet.me \ 
+    CRONDELAY=*/5   \
     TZ=Europe/Paris
 
 RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 
@@ -13,7 +14,7 @@ RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \
   && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg.sh \  
   && echo "curl -s -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh" >> /usr/local/bin/updtPkg.sh \
   && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg.sh \
-  && echo '*/5     *       *       *       *       /usr/local/bin/updateDns.sh' >> /etc/crontabs/root \
+  && echo $CRONDELAY'     *       *       *       *       /usr/local/bin/updateDns.sh' > /etc/crontabs/root \
   && echo '00     1       *       *       sun       /usr/local/bin/updtPkg.sh'     >> /etc/crontabs/root \ 
   && echo "#! /bin/sh"                                                                     > /usr/local/bin/entrypoint.sh \
   && echo "echo 'Mise à jour ...'"                                                         >> /usr/local/bin/entrypoint.sh  \

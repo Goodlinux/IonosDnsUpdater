@@ -11,7 +11,7 @@ RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \
   && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \ 
   && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg.sh \ 
   && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg.sh \  
-  && echo "curl -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh" >> /usr/local/bin/updtPkg.sh \
+  && echo "curl -s -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh" >> /usr/local/bin/updtPkg.sh \
   && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg.sh \
   && echo '*/5     *       *       *       *       /usr/local/bin/updateDns.sh' >> /etc/crontabs/root \
   && echo '00     1       *       *       sun       /usr/local/bin/updtPkg.sh'     >> /etc/crontabs/root \ 
@@ -19,7 +19,7 @@ RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \
   && echo "echo 'Mise à jour ...'"                                                         >> /usr/local/bin/entrypoint.sh  \
   && echo "apk -U upgrade "                                                                >> /usr/local/bin/entrypoint.sh  \
   && echo "cd /usr/local/bin/"                                                             >> /usr/local/bin/entrypoint.sh \
-  && echo "curl -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh"  >> /usr/local/bin/entrypoint.sh  \
+  && echo "curl -s -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh"  >> /usr/local/bin/entrypoint.sh  \
   && echo "echo 'lancement de cron ...'"                                                   >> /usr/local/bin/entrypoint.sh  \
   && echo "crond -b "                                                                      >> /usr/local/bin/entrypoint.sh  \
   && echo "/bin/sh"                                                                        >> /usr/local/bin/entrypoint.sh  \

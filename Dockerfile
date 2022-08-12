@@ -20,7 +20,7 @@ RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \
   && echo "apk -U upgrade "                                                                >> /usr/local/bin/entrypoint.sh  \
   && echo "cd /usr/local/bin/"                                                             >> /usr/local/bin/entrypoint.sh \
   && echo "curl -s -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh"  >> /usr/local/bin/entrypoint.sh  \
-  && echo "echo 'Update CronTab with Param ...'"                                           >> /usr/local/bin/entrypoint.sh  \
+  && echo "echo 'Update CronTab with Param \$CRON_DELAY...'"                                           >> /usr/local/bin/entrypoint.sh  \
   && echo "echo \$CRON_DELAY'     *       *       *       *       /usr/local/bin/updateDns.sh' > /etc/crontabs/root"  >> /usr/local/bin/entrypoint.sh  \
   && echo "echo '00     1       *       *       sun       /usr/local/bin/updtPkg.sh'     >> /etc/crontabs/root"      >> /usr/local/bin/entrypoint.sh  \
   && echo "echo 'lancement de cron ...'"                                                   >> /usr/local/bin/entrypoint.sh  \

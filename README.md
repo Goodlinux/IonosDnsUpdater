@@ -18,10 +18,11 @@ docker image available :
  
 # ENV VARIABLES FOR DOCKER CONTAINER  
  
- API_KEY = ccc.secret           ' put the Api code and secret you have retrieve from ionos  
- DOMAIN = xxx.mydomain.ext      ' name of the domain/subdomain to update 
- DNS_TYPE = A                   ' DNS record type    
- TZ=Europe/Paris                ' Time zone of the container  
+ API_KEY =  put the Api code and secret you have retrieve from ionos  ex : ccc.secret   
+ DOMAIN =   name of the domain/subdomain to update   ex : xxx.mydomain.ext  
+ DNS_TYPE = DNS record type  ex : A  
+ CRON_DELAY = Delay to start the DNS update via cron  ex : */5  for each 5 minutes  
+ TZ =       Time zone of the container     ex : Europe/Paris  
   
  
  License

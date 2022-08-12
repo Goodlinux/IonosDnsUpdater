@@ -164,12 +164,12 @@ while getopts "ha:ef:v" opt; do
         esac
 done
 
-#verifie if verbose mode was set by parameter ou system variable for Docker running
+#verify if verbose mode was set by parameter ou system variable for Docker running
 if [ ! "$verbose_mode" = "true" ]; then
-	if [ $(grep -q "$VERBOSE" <<< "y,Y,yes,YES,o,O,oui,OUI,Yes,Oui") ]; then
-		log "- verbose mode activated"
-		verbose_mode=true
-	fi
+    if [ "$VERBOSE" = "$(echo $VERBOSE | grep -E "^(y|Y|o|O)")" ]; then
+        verbose_mode=true
+        log "- verbose mode activated via sys param"
+    fi
 fi
 
 # checks if ip was set and retrieves it if not

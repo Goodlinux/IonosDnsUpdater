@@ -24,6 +24,7 @@ docker image available :
  CRON_DELAY = Delay to start the DNS update via cron  ex : */5  for each 5 minutes  
  TZ =       Time zone of the container     ex : Europe/Paris  
   
- 
+ Only working with IP v4
+  
  License
  Distributed under the MIT License. See LICENSE for more information.

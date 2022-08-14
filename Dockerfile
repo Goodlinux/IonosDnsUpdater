@@ -24,8 +24,7 @@ RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \
   && echo "echo \$CRON_DELAY'     *       *       *       *       /usr/local/bin/updateDns.sh' > /etc/crontabs/root"  >> /usr/local/bin/entrypoint.sh  \
   && echo "echo '00     1       *       *       sun       /usr/local/bin/updtPkg.sh'     >> /etc/crontabs/root"      >> /usr/local/bin/entrypoint.sh  \
   && echo "echo 'lancement de cron ...'"                                                   >> /usr/local/bin/entrypoint.sh  \
-  && echo "crond -b "                                                                      >> /usr/local/bin/entrypoint.sh  \
-  && echo "/bin/sh"                                                                        >> /usr/local/bin/entrypoint.sh  \
+  && echo "crond -f"                                                                      >> /usr/local/bin/entrypoint.sh  \
   && chmod a+x /usr/local/bin/*
 # Lancement du daemon cron
 CMD /usr/local/bin/entrypoint.sh

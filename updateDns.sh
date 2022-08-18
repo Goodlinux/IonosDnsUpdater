@@ -140,12 +140,15 @@ GetRecordSpf()
             log "Matching $record_name record found."
             record_content=$(echo $record | jq '.content' | tr -d '"')
             spf_ip=$(expr index "$record_content" ip4:)
-	    if [ "$record_ip" = "$ip" ];  then
-                    echo "Ip in $record_name : $record_ip is already up to date" >> /dev/stdout
+	    echo "ip dans sfp1 : $spf_ip"
+	    spf_ip=$(echo $record_content | grep -E '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}')
+	    echo "ip dans sfp2 : $spf_ip"
+	    if [ "$spf_ip" = "$ip" ];  then
+                    echo "Ip in SPF $record_name : $record_ip is already up to date" >> /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
                     log "Updating record $record_name with Id : $record_id"
-                    UpdateDNSRecord
+                    #UpdateDNSRecord
 		    if [ $? = 0 ]; then 
 		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
 		    fi

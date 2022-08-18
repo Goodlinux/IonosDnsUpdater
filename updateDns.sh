@@ -22,6 +22,7 @@ Help()
     echo "-e	show error codes"
     echo "-f	redirect verbose output to file"
     echo "-v	give verbose output"
+    echo "-s 	update SPF record with IP"
     echo
 }
 
@@ -66,7 +67,7 @@ GetZoneId()
 GetRecordZone() 
 {
     log "- Searching dns records."
-    customer_url="$base_url$dns_zone/$zone_id?recordType=$DNS_TYPE"
+    customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordType=$DNS_TYPE"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     echo $records | jq -c '.[]'  | while read record; do
         record_name=$(echo $record | jq '.name' | tr -d '"')
@@ -126,6 +127,41 @@ CreateDNSRecord()
 	fi
 }
 
+
+GetRecordSpf() 
+{
+    log "- Searching spf records."
+    customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordType=TXT"
+    records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
+    echo $records | jq -c '.[]'  | while read record; do
+        record_name=$(echo $record | jq '.name' | tr -d '"')
+		#echo "name : $record_name"
+        if [ "$record_name" = "$DOMAIN" ];  then
+            log "Matching $record_name record found."
+            record_content=$(echo $record | jq '.content' | tr -d '"')
+            spf_ip=$(expr index "$record_content" ip4:)
+	    if [ "$record_ip" = "$ip" ];  then
+                    echo "Ip in $record_name : $record_ip is already up to date" >> /dev/stdout
+            else
+                    record_id=$(echo $record | jq '.id' | tr -d '"')
+                    log "Updating record $record_name with Id : $record_id"
+                    UpdateDNSRecord
+		    if [ $? = 0 ]; then 
+		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
+		    fi
+        fi
+		    #Get out of the While with ERR 1 mean we found the record
+		exit 1
+		break
+	fi
+    done 
+    if [ ! $? = 1 ]; then
+	    log "Enregistrement non trouvé"
+	    CreateDNSRecord
+    fi
+}
+
+
 CheckParamIP() 
 {
 	# check if ip paraeter is valid or set
@@ -146,19 +182,22 @@ CheckParamIP()
 ##### START #####
 #################
 # Get Params
-while getopts "ha:ef:v" opt; do
+while getopts "ha:ef:vs" opt; do
      case $opt in
-                # display help
+   # display help
         h) Help;;
-                # ip adress
+   # ip adress
         a) ip=$OPTARG && log "- ip in param : $ip";;
-                # show error codes
+   # show error codes
         e) ErrorCodes exit;;
-                # redirect verbose output to file
+   # redirect verbose output to file
         f) redirect_mode=true && redirect_file=$OPTARG;;
-                # verbose mode
+   # verbose mode
         v) verbose_mode=true && log "- verbose mode activated";;
-                # invalid options
+   # Update IP in SPF for mail
+	s) spf_mode=true
+		;;
+   # invalid options
         \?) echo "Error: Invalid options"
             exit 1;;
         esac
@@ -180,3 +219,7 @@ echo "Updating : $DOMAIN with ip : $ip" >> /dev/stdout
 GetZoneId
 # Retrieve Record Id and Create or Update DNS
 GetRecordZone
+
+if [ '$spf_mode' = 'true' ]; then
+	GetRecordSpf
+fi

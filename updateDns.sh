@@ -109,7 +109,7 @@ CreateDNSRecord()
 	log "- Creating DNS Record $DOMAIN."
 	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-    return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+    	return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [ "$err" = "" ] || [ "$err" = "null"  ]; then
@@ -153,7 +153,7 @@ GetRecordSpf()
             if [ ! "$record_content" = "$new_content" ]; then 
                 log "Old and new records are different, updating spf record"
                 record_id=$(echo $record | jq -c '.id' | tr -d '"')
-                log "- Updating SPF Record. Record Id :  $record_id"
+                echo "Updating SPF Record. Record Id :  $record_id"
                 update_url="$base_url$dns_zone/$zone_id/records/$record_id"
                 record_content="{\"content\":\"$new_content\"}"
                 return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
@@ -165,6 +165,7 @@ GetRecordSpf()
                 fi
             else
                 log "Old and new record are the same no update necessary"
+		echo "SPF record is already up to date"
             fi
         fi
     done 

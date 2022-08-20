@@ -51,9 +51,9 @@ If the record is not found do nothing
  VERBOSE = indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run
  TZ =       Time zone of the container     ex : Europe/Paris  
   
- Only working with IP v4
- Make test before production, I could not be responsible for the usage of this piece of code.
- Be sure of what you are doing, by updating your DNS records. 
+ Only working with IP v4  
+ Make test before production, I could not be responsible for the usage of this piece of code.  
+ Be sure of what you are doing, by updating your DNS records.  
  
  License
  Distributed under the MIT License. See LICENSE for more information.

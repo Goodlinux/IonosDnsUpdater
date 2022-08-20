@@ -72,7 +72,7 @@ GetRecordZone()
                     echo "Ip in $record_name : $record_ip is already up to date" >> /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
-                    log "Updating record $record_name with Id : $record_id"
+                    log "Updating record Id : $record_id with new ip : $ip"
                     #UpdateDNSRecord
 		    if [ $? = 0 ]; then 
 		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout

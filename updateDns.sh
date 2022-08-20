@@ -9,7 +9,6 @@ dns_zone="dns/v1/zones"
 output_type="accept: application/json"
 content_type="Content-Type: application/json"
 
-
 #######################
 ##### Functions #######
 #######################
@@ -17,13 +16,13 @@ content_type="Content-Type: application/json"
 Help() 
 {
      # Show Help
-    echo "Syntax update.sh [-a|-e|-f|-v|-s]."
+    echo "Syntax updateDns.sh [-a|-e|-f|-v|-s]."
     echo "options:"
     echo "-a	change dns entry to given ip adress"
     echo "-e	show error codes"
     echo "-f	redirect verbose output to file"
     echo "-v	give verbose output"
-    echo "-s 	update SPF record with IP"
+    echo "-s    update SPF record with IP"
     echo
 }
 
@@ -203,7 +202,7 @@ while getopts "ha:f:vs" opt; do
    # verbose mode
         v) verbose_mode=true && log "- verbose mode activated";;
    # Update IP in SPF for mail
-        s) spf_mode=true		;;
+        s) spf_mode=true && log "- spf mode activated";;
    # invalid options
         \?) echo "Error: Invalid options"
             exit 1;;
@@ -216,7 +215,6 @@ if [ $help_mode ]; then
 else
     #verify if verbose mode was set by parameter ou system variable for Docker running
     if [ ! $verbose_mode ]; then
-        echo "VERVOSE : $VERBOSE"
         test=$(echo $VERBOSE | grep -q '^[y|Y|o|O]')
         if [ "$?" = "0" ]; then
             verbose_mode=true
@@ -226,7 +224,6 @@ else
     
     #verify if spf mode was set by parameter ou system variable for Docker running
     if [ ! $spf_mode ]; then
-        echo "SPF : $SPF"
         test=$(echo $SPF | grep -q '^[y|Y|o|O]')
         if [ "$?" = "0" ]; then
             spf_mode=true
@@ -237,15 +234,16 @@ else
     # checks if ip was set and retrieves it if not
     CheckParamIP
     echo "Date : $(date +%Y-%m-%d_%H-%M)" >> /dev/stdout
-    echo "Updating : $DOMAIN with ip : $ip" >> /dev/stdout
     # Retrieve DNS Zone Id
     GetZoneId
     
     # if spf is required, check existing spf TXT record and update it if it contains ip4
     if [ $spf_mode  ]; then
+        echo "Updating : $DOMAIN SPF record with ip : $ip" >> /dev/stdout
         GetRecordSpf
     else
         # If it was an other Record than spf then check if the content of the record has change before updating it
+        echo "Updating : $DOMAIN $DNS_TYPE record with ip : $ip" >> /dev/stdout
         GetRecordZone
     fi
 fi

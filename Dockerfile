@@ -7,7 +7,6 @@ ENV API_KEY=xxx.yyyy  \
     CRON_DELAY=*/5   \
     VERBOSE=n  \ 
     SPF=n   \
-    PARAMS=      \
     TZ=Europe/Paris
 
 RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 

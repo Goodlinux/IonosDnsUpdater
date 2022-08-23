@@ -73,7 +73,7 @@ GetRecordZone()
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
                     log "Updating record Id : $record_id with new ip : $ip"
-                    #UpdateDNSRecord
+                    UpdateDNSRecord
 		    if [ $? = 0 ]; then 
 		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
 		    fi
@@ -85,7 +85,7 @@ GetRecordZone()
     done 
     if [ ! $? = 1 ]; then
 	    log "Enregistrement non trouvé"
-	    #CreateDNSRecord
+	    CreateDNSRecord
     fi
 }
 

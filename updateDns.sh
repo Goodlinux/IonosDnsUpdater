@@ -120,7 +120,6 @@ CreateDNSRecord()
 	fi
 }
 
-
 GetRecordSpf() 
 {
 # searchin for existing spf record if it exist update it if not do nothing spf record are TXT records type
@@ -170,7 +169,6 @@ GetRecordSpf()
         fi
     done 
 }
-
 
 CheckParamIP() 
 {

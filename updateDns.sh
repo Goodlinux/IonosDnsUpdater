@@ -37,8 +37,36 @@ log()
 
 GetExtIpAdress() 
 {
-	ip=$(curl -s ifconfig.me)
 	log "Get ip from external : $ip."
+	case $DNS_TYPE in
+            # A Record type need ipv4 adresse
+        A)
+            ip=$(curl -s ifconfig.me)
+            if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
+                log "Get external Ipv4 : $ip"
+            else
+                log "ipv4 isn't valid."
+                exit 1
+            fi
+            ;;
+            # AAAA record type need ipv6 adresse
+        AAAA) 
+            ip=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+            # test if ipv6 is valid
+            if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
+                log "Get external Ipv6 : $ip"
+            else
+                # ipv6 is not available for your connexion
+                if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
+                    log "External ip is an Ipv4 : $ip setting DNS record type to A"
+                    DNS_TYPE="A"
+                else
+                    log "external ipv6 and ipv4 isn't valid."
+                    exit 1
+                fi
+            fi
+            ;;
+    esac
 }
 
 GetZoneId() 
@@ -61,6 +89,7 @@ GetRecordZone()
 # searching for dns record if existing update it if not create it
     log "- Searching dns records."
     customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordName=$DOMAIN&recordType=$DNS_TYPE"
+    echo $customer_url
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     echo $records | jq -c '.[]'  | while read record; do
         record_name=$(echo $record | jq '.name' | tr -d '"')
@@ -69,13 +98,12 @@ GetRecordZone()
             log "Matching $record_name record found."
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [ "$record_ip" = "$ip" ];  then
-                    echo "Ip in $record_name : $record_ip is already up to date" >> /dev/stdout
+                    echo "Ip in $record_name $DNS_TYPE : $record_ip is already up to date" >> /dev/stdout
             else
                     record_id=$(echo $record | jq '.id' | tr -d '"')
-                    log "Updating record Id : $record_id with new ip : $ip"
                     UpdateDNSRecord
 		    if [ $? = 0 ]; then 
-		        echo "Record $record_name ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
+		        echo "Record $record_name $DNS_TYPE ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
 		    fi
         fi
 		    #Get out of the While with ERR 1 mean we found the record
@@ -91,10 +119,9 @@ GetRecordZone()
 
 UpdateDNSRecord() 
 {
-	log "- Updating DNS Record. Record Id :  $record_id"
+	log "Updating record $record_name with Id : $record_id"
 	update_url="$base_url$dns_zone/$zone_id/records/$record_id"
 	record_content="{\"content\":\"$ip\"}"
-	log "Record -$record_content"
 	return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
@@ -106,10 +133,10 @@ UpdateDNSRecord()
 
 CreateDNSRecord() 
 {
-	log "- Creating DNS Record $DOMAIN."
+	log "- Creating DNS Record $DOMAIN $DNS_TYPE with ip : $ip"
 	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$DOMAIN\",\"type\":\"$DNS_TYPE\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-    	return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+    return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [ "$err" = "" ] || [ "$err" = "null"  ]; then
@@ -126,12 +153,9 @@ GetRecordSpf()
     log "- Searching spf records."
     customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordName=$DOMAIN&recordType=TXT"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records' | tr -d '\\' | tr -s '"')
-    #echo $records > records.txt
     echo $records | jq -c '.[]'  | while read record; do
         log "Treament of record $record"
         record_content=$(echo $record | jq -c '.content' | tr -d '"')
-        #echo $record_content > record_content
-        # searching if record content begin with v=spf1 to identifie spf record
         test=$(echo $record_content | grep -q '^v=spf1')
         if [ $? = 0 ];  then
             log "Matching spf1 record found."
@@ -152,7 +176,7 @@ GetRecordSpf()
             if [ ! "$record_content" = "$new_content" ]; then 
                 log "Old and new records are different, updating spf record"
                 record_id=$(echo $record | jq -c '.id' | tr -d '"')
-                echo "Updating SPF Record. Record Id :  $record_id"
+                log "- Updating SPF Record. Record Id :  $record_id"
                 update_url="$base_url$dns_zone/$zone_id/records/$record_id"
                 record_content="{\"content\":\"$new_content\"}"
                 return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
@@ -164,7 +188,6 @@ GetRecordSpf()
                 fi
             else
                 log "Old and new record are the same no update necessary"
-		echo "SPF record is already up to date"
             fi
         fi
     done 
@@ -177,12 +200,27 @@ CheckParamIP()
 		log "ip is not set, search for actual external ip of this network"
 		GetExtIpAdress
 	else
-         if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
-        	log "Ip : $ip is valid."
-	    else
-            log "ip isn't valid. search for actual external ip of this network"
-            GetExtIpAdress
-        fi
+        case $DNS_TYPE in
+            # A Record type need ipv4 adresse
+        A) 
+            if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
+                log "Ipv4 : $ip is valid."
+            else
+                log "ipv4 isn't valid. search for actual external ip of this network"
+                GetExtIpAdress
+            fi
+            ;;
+            # AAAA record type need ipv6 adresse
+        AAAA) 
+            if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
+                log "Ipv6 : $ip is valid."
+            else
+                log "ipv6 isn't valid. search for actual external ip of this network"
+                GetExtIpAdress
+            fi
+            ;;
+        esac
+
 	fi
 }
 
@@ -190,6 +228,7 @@ CheckParamIP()
 ##### START #####
 #################
 # Get Params
+echo "Date : $(date +%Y-%m-%d_%H-%M)" >> /dev/stdout
 while getopts "ha:f:vs" opt; do
      case $opt in
    # display help
@@ -231,18 +270,18 @@ else
     fi
 
     # checks if ip was set and retrieves it if not
+    
     CheckParamIP
-    echo "Date : $(date +%Y-%m-%d_%H-%M)" >> /dev/stdout
     # Retrieve DNS Zone Id
     GetZoneId
     
     # if spf is required, check existing spf TXT record and update it if it contains ip4
-    if [ $spf_mode  ]; then
-        echo "Updating : $DOMAIN SPF record with ip : $ip" >> /dev/stdout
-        GetRecordSpf
-    else
+   if [ $spf_mode  ]; then
+       echo "Updating : $DOMAIN SPF record with ip : $ip" >> /dev/stdout
+       GetRecordSpf
+   else
         # If it was an other Record than spf then check if the content of the record has change before updating it
-        echo "Updating : $DOMAIN $DNS_TYPE record with ip : $ip" >> /dev/stdout
-        GetRecordZone
-    fi
+       echo "Updating : $DOMAIN $DNS_TYPE record with ip : $ip" >> /dev/stdout
+       GetRecordZone
+   fi
 fi

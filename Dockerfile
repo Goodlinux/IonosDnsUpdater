@@ -3,7 +3,7 @@ MAINTAINER Ludovic MAILLET <Ludoivc@maillet.me>
 
 ENV API_KEY=xxx.yyyy  \
     DNS_TYPE=A  \
-    DOMAIN=test.maillet.me \ 
+    DOMAIN=sub.domain.com \ 
     CRON_DELAY=*/5   \
     VERBOSE=n  \ 
     BOX_IP=192.168.0.1   \

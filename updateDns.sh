@@ -41,7 +41,7 @@ GetExtIpAdress()
             # A Record type need ipv4 adresse
         A | SPF)
         	# Try to get IP from local LiveBox from Orange
-		if [ "$BOX_IP" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+		if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
 			log "Try to get Ip from Box"
 			ip=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPAddress | tr -d '"')
 			log "Box ip : $ip"
@@ -58,7 +58,7 @@ GetExtIpAdress()
             # AAAA record type need ipv6 adresse
         AAAA)
 		# Try to get IP from local LiveBox from Orange
-		if [ "$BOX_IP" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+		if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
 			log "Try to get Ip from Box"
 			ip=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPv6Address | tr -d '"')
 			log "Box ipv6 : $ip"

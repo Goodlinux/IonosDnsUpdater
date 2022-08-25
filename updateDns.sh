@@ -16,13 +16,12 @@ content_type="Content-Type: application/json"
 Help() 
 {
      # Show Help
-    echo "Syntax updateDns.sh [-a|-e|-f|-v|-s]."
+    echo "Syntax updateDns.sh [-a|-e|-f|-v]."
     echo "options:"
     echo "-a	change dns entry to given ip adress"
     echo "-e	show error codes"
     echo "-f	redirect verbose output to file"
     echo "-v	give verbose output"
-    echo "-s    update SPF record with IP"
     echo
 }
 
@@ -40,37 +39,46 @@ GetExtIpAdress()
 	log "Get ip from external : $ip."
 	case $DNS_TYPE in
             # A Record type need ipv4 adresse
-        A)
-            ip=$(curl -s ifconfig.me)
-            if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
-                log "Get external Ipv4 : $ip"
-            else
-                log "ipv4 isn't valid."
-                exit 1
-            fi
+        A | SPF)
+        	# Try to get IP from local LiveBox from Orange
+		if [ "$BOX_IP" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+			log "Try to get Ip from Box"
+			ip=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPAddress | tr -d '"')
+			log "Box ip : $ip"
+		else
+            		ip=$(curl -s ifconfig.me)
+            	fi
+            	if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
+               		log "Get external Ipv4 : $ip"
+            	else
+               		log "ipv4 isn't valid."
+               		exit 1
+            	fi
             ;;
             # AAAA record type need ipv6 adresse
-        AAAA) 
-            ip=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+        AAAA)
+		# Try to get IP from local LiveBox from Orange
+		if [ "$BOX_IP" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+			log "Try to get Ip from Box"
+			ip=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPv6Address | tr -d '"')
+			log "Box ipv6 : $ip"
+		else
+            		ip=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+            	fi
             # test if ipv6 is valid
-            if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
-                log "Get external Ipv6 : $ip"
-            else
-                # ipv6 is not available for your connexion
-                if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
-                    log "External ip is an Ipv4 : $ip setting DNS record type to A"
-                    DNS_TYPE="A"
-                else
-                    log "external ipv6 and ipv4 isn't valid."
-                    exit 1
-                fi
-            fi
+            	if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
+                	log "Get external Ipv6 : $ip"
+            	else
+                	log "ipv6 isn't valid, try with A record Type and ipv4 adresse."
+                	exit 1
+            	fi
             ;;
     esac
 }
 
 GetZoneId() 
 {
+#Get zone Id for the Domain
     log "- Searching zone id."
     zone_id=$(curl -X GET "$base_url$dns_zone" -H "$curl_param $API_KEY" -s );
     # check if valid object was found
@@ -89,7 +97,6 @@ GetRecordZone()
 # searching for dns record if existing update it if not create it
     log "- Searching dns records."
     customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordName=$DOMAIN&recordType=$DNS_TYPE"
-    echo $customer_url
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     echo $records | jq -c '.[]'  | while read record; do
         record_name=$(echo $record | jq '.name' | tr -d '"')
@@ -149,17 +156,19 @@ CreateDNSRecord()
 
 GetRecordSpf() 
 {
-# searchin for existing spf record if it exist update it if not do nothing spf record are TXT records type
+# searchin for existing spf record if it exist update it if not do nothing 
+# note that spf record are TXT records type
     log "- Searching spf records."
     customer_url="$base_url$dns_zone/$zone_id?suffix=$DOMAIN&recordName=$DOMAIN&recordType=TXT"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records' | tr -d '\\' | tr -s '"')
     echo $records | jq -c '.[]'  | while read record; do
         log "Treament of record $record"
         record_content=$(echo $record | jq -c '.content' | tr -d '"')
+        # chearch for string v=spf1 in record content
         test=$(echo $record_content | grep -q '^v=spf1')
         if [ $? = 0 ];  then
             log "Matching spf1 record found."
-            # setting new content by cuting actual content with awk and changing the ip after ip4: 
+            # setting new content by cuting actual content with awk and changing the ip after ip4: by the new one
             new_content=$(echo $record_content | awk -v newip=$ip '
                     {for (i=1; i<=NF; i++) 
                         {
@@ -197,12 +206,12 @@ CheckParamIP()
 {
 	# check if ip paraeter is valid or set
 	if [ "$ip" = "" ]; then
-		log "ip is not set, search for actual external ip of this network"
+		log "ip is not set by parameter, search for actual external ip of this network"
 		GetExtIpAdress
 	else
         case $DNS_TYPE in
-            # A Record type need ipv4 adresse
-        A) 
+            # A and SPF Record type need ipv4 adresse
+        A | SPF) 
             if [ "$ip" = "$(echo $ip | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ];  then
                 log "Ipv4 : $ip is valid."
             else
@@ -229,7 +238,7 @@ CheckParamIP()
 #################
 # Get Params
 echo "Date : $(date +%Y-%m-%d_%H-%M)" >> /dev/stdout
-while getopts "ha:f:vs" opt; do
+while getopts "ha:f:v" opt; do
      case $opt in
    # display help
         h) help_mode=true;;
@@ -240,7 +249,7 @@ while getopts "ha:f:vs" opt; do
    # verbose mode
         v) verbose_mode=true && log "- verbose mode activated";;
    # Update IP in SPF for mail
-        s) spf_mode=true && log "- spf mode activated";;
+#        s) spf_mode=true && log "- spf mode activated";;
    # invalid options
         \?) echo "Error: Invalid options"
             exit 1;;
@@ -261,22 +270,21 @@ else
     fi
     
     #verify if spf mode was set by parameter ou system variable for Docker running
-    if [ ! $spf_mode ]; then
-        test=$(echo $SPF | grep -q '^[y|Y|o|O]')
-        if [ "$?" = "0" ]; then
-            spf_mode=true
-            log "- spf mode activated via sys param"
-        fi
-    fi
+ #   if [ ! $spf_mode ]; then
+ #       test=$(echo $SPF | grep -q '^[y|Y|o|O]')
+ #       if [ "$?" = "0" ]; then
+ #           spf_mode=true
+ #           log "- spf mode activated via sys param"
+ #       fi
+ #   fi
 
     # checks if ip was set and retrieves it if not
-    
     CheckParamIP
     # Retrieve DNS Zone Id
     GetZoneId
     
     # if spf is required, check existing spf TXT record and update it if it contains ip4
-   if [ $spf_mode  ]; then
+   if [ "$DNS_TYPE" = "SPF" ]; then
        echo "Updating : $DOMAIN SPF record with ip : $ip" >> /dev/stdout
        GetRecordSpf
    else

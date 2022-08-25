@@ -44,7 +44,6 @@ If the record is not found do nothing
  https://developer.hosting.ionos.fr/docs/getstarted   
  the API key will be use in **API_KEY* param   
  
- 
 # PARAMETERS ARE
  
  Syntax updateDns.sh [-a|-e|-f|-v|-s].  
@@ -56,7 +55,6 @@ If the record is not found do nothing
    |-f  |filename |redirect verbose output to file  |
    |-v  | |give verbose output  |
       
-
  If you don't use the script in a docker container, 
  Add the variables **DOMAIN**, **DNS_TYPE** and **API_KEY** at the top of the script 
  
@@ -64,16 +62,15 @@ If the record is not found do nothing
   > DNS_TYPE=A   
   > API_KEY=xxxx.yyyyyy   
 
-
 # ENV VARIABLES FOR DOCKER CONTAINER  
  
  > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : publicprefix.secret  
  > - **DOMAIN** =   name of the domain/subdomain to update   ex : xxx.mydomain.com  
  > - **DNS_TYPE** = DNS record type  ex : A, AAAA, or SPF to update a SPF TXT record   
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
- > - **PARAMS** = send the parameters to the script ex : -v -s (optional)   
+ > - **PARAMS** = send the parameters to the script ex : -v -a (optional parameter)   
  > - **VERBOSE** = indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run 
- > - **BOX_IP** = local ip of the livebox to be able to catch ipv4 and ipv6 external ip (optional)   
+ > - **BOX_IP** = local ip of the livebox to be able to catch ipv4 and ipv6 external ip ex : 192.168.0.1 (optional parameter)   
  > - **TZ** =       Time zone of the container     ex : Europe/Paris   
   
  Working with IPv4 or IpV6  

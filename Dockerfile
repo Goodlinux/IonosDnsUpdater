@@ -6,7 +6,7 @@ ENV API_KEY=xxx.yyyy  \
     DOMAIN=test.maillet.me \ 
     CRON_DELAY=*/5   \
     VERBOSE=n  \ 
-    SPF=n   \
+    BOX_IP=192.168.0.1   \
     TZ=Europe/Paris
 
 RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 

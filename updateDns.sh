@@ -269,15 +269,6 @@ else
         fi
     fi
     
-    #verify if spf mode was set by parameter ou system variable for Docker running
- #   if [ ! $spf_mode ]; then
- #       test=$(echo $SPF | grep -q '^[y|Y|o|O]')
- #       if [ "$?" = "0" ]; then
- #           spf_mode=true
- #           log "- spf mode activated via sys param"
- #       fi
- #   fi
-
     # checks if ip was set and retrieves it if not
     CheckParamIP
     # Retrieve DNS Zone Id

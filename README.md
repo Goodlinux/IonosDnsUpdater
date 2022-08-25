@@ -11,8 +11,10 @@ It works for
  - A DNS records with ipv4
  - AAAA DNS records type with ipv6
  - SPF TXT DNS Record that are SPF with ip inside (SPF records are TXT records for mail server purpose)
- - CNAME DNS records (in this case use the ipv4 adresse)
- - ...
+ - CNAME DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a dns.ionos.fr)
+ - SRV DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a '0 443 srv.ionos.fr')
+ - MX DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a mx00.ionos.fr)
+ - TXT DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a 'v=DMARC1; p=none')
 
 running in a docker container or stand alone on linux system  
 docker image available : 

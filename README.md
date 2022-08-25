@@ -67,8 +67,8 @@ If the record is not found do nothing
 
 # ENV VARIABLES FOR DOCKER CONTAINER  
  
- > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : ccc.secret   
- > - **DOMAIN** =   name of the domain/subdomain to update   ex : xxx.mydomain.ext  
+ > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : publicprefix.secret  
+ > - **DOMAIN** =   name of the domain/subdomain to update   ex : xxx.mydomain.com  
  > - **DNS_TYPE** = DNS record type  ex : A, AAAA, or SPF to update a SPF TXT record   
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
  > - **PARAMS** = send the parameters to the script ex : -v -s (optional)   

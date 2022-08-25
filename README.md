@@ -41,7 +41,9 @@ If the record is not found do nothing
  
  Prerequisites
  Get an API Key at IONOS API Docs
- https://developer.hosting.ionos.fr/docs/getstarted
+ https://developer.hosting.ionos.fr/docs/getstarted   
+ the API key will be use in **API_KEY* param   
+ 
  
 # PARAMETERS ARE
  
@@ -56,7 +58,11 @@ If the record is not found do nothing
       
 
  If you don't use the script in a docker container, 
- Add the variables **DOMAIN**, **DNS_TYPE** and **API_KEY** at the top of the script
+ Add the variables **DOMAIN**, **DNS_TYPE** and **API_KEY** at the top of the script 
+ 
+  > DOMAIN=mon.domain.com   
+  > DNS_TYPE=A   
+  > API_KEY=xxxx.yyyyyy   
 
 
 # ENV VARIABLES FOR DOCKER CONTAINER  

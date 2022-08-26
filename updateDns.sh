@@ -256,8 +256,8 @@ else
     for record in ${DOMAIN}; do            # DOMAIN Variable should be formated domain="my.domain.net:A test.domain.net:AAAA domain.net:SPF"
         domainName=$(echo $record | cut -d ':' -f 1)
         dnsType=$(echo $record | cut -d ':' -f 2)
-        log "=============================================="
-        log "Update of Domain : $domainName Type : $dnsType"
+        echo "=============================================="
+        echo "Update of Domain : $domainName Type : $dnsType"
         case "$dnsType" in
             A)          
                 # A and SPF Record type need ipv4 adresse
@@ -268,7 +268,7 @@ else
             AAAA)       
                 # AAAA record type need ipv6 adresse
                 ip=$ipv6
-                echo "ip : $ip"
+                log "ip : $ip"
                 if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
                     GetRecordZone
                     log "record zone AAAA with ip : $ip"

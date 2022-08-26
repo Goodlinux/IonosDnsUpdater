@@ -3,7 +3,7 @@
 [![ionos](https://img.shields.io/static/v1?label=based_on&message=IonosApi&color=blue)](link=https://developer.hosting.ionos.fr/docs/dns,float="left")
  [![alpine](https://img.shields.io/static/v1?label=using&message=alpine&color=orange)](https://alpinelinux.org)
 
-Update Ionos domain records to update the current public ip
+Update Ionos domain records to update the current public ip with cron delay that you can paramter
 
 DSN Update for dns provider ionos, looks like a DynDSN 
 This program aims is to update ip adresse for IONOS domains.

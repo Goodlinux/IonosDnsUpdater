@@ -1,10 +1,9 @@
 # IonosDnsUpdater 
 
 [![ionos](https://img.shields.io/static/v1?label=based_on&message=IonosApi&color=blue)](link=https://developer.hosting.ionos.fr/docs/dns,float="left")
- [![alpine](https://img.shields.io/static/v1?label=using&message=alpine&color=orange)](https://alpinelinux.org)
- [![curl](https://img.shields.io/static/v1?label=using&message=curl&color=orange)](https://github.com/curl/curl)
- [![jq](https://img.shields.io/static/v1?label=using&message=jq&color=orange)](https://github.com/stedolan/jq)
- 
+ [![alpine](https://img.shields.io/static/v1?label=using&message=alpine&color=orange)](https://alpinelinux.org) 
+ [![curl](https://img.shields.io/static/v1?label=using&message=curl&color=orange)](https://github.com/curl/curl) 
+ [![jq](https://img.shields.io/static/v1?label=using&message=jq&color=orange)](https://github.com/stedolan/jq)   
  
 Update Ionos domain records to update the current public ip with cron delay that you can paramter
 

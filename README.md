@@ -58,15 +58,13 @@ If the record is not found do nothing
  If you don't use the script in a docker container, 
  Add the variables **DOMAIN**, **DNS_TYPE** and **API_KEY** at the top of the script 
  
-  > DOMAIN=mon.domain.com   
-  > DNS_TYPE=A   
+  > DOMAIN="mon.domain.com:A mon.domain.net:AAAA"     
   > API_KEY=xxxx.yyyyyy   
 
 # ENV VARIABLES FOR DOCKER CONTAINER  
  
  > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : publicprefix.secret  
- > - **DOMAIN** =   name of the domain/subdomain to update   ex : xxx.mydomain.com  
- > - **DNS_TYPE** = DNS record type  ex : A, AAAA, or SPF to update a SPF TXT record   
+ > - **DOMAIN** =   name of the domain/subdomain to update : dns type multiple domain:type should be separated by space ex : DOMAIN=\"my.domain.net:A test.domain.net:AAAA domain.net:SPF\"     
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
  > - **PARAMS** = send the parameters to the script ex : -v -a (optional parameter)   
  > - **VERBOSE** = indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run 

@@ -51,7 +51,6 @@ If the record is not found do nothing
    |param|extention|effect|
    |-------|-----------|----|
    |-a  |1.2.3.4 |change dns entry to given ip adress  |
-   |-e  | |show error codes  |
    |-f  |filename |redirect verbose output to file  |
    |-v  | |give verbose output  |
       

@@ -50,12 +50,13 @@ If the record is not found do nothing
    options: 
    |param|extention|effect|
    |-------|-----------|----|
-   |-a  |1.2.3.4 |change dns entry to given ip adress  |
+   |-a  |1.2.3.4 |change dns entry to given ip adress A, AAAA or SPF record type |
+   |-a  |dmark=xxx  or dns.domain.com | change CNAME, TXT, MX record with the text following -a |
    |-f  |filename |redirect verbose output to file  |
    |-v  | |give verbose output  |
       
  If you don't use the script in a docker container, 
- Add the variables **DOMAIN**, **DNS_TYPE** and **API_KEY** at the top of the script 
+ Add the variables **DOMAIN** and **API_KEY** at the top of the script 
  
   > DOMAIN="mon.domain.com:A mon.domain.net:AAAA"     
   > API_KEY=xxxx.yyyyyy   

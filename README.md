@@ -10,7 +10,7 @@ This program aims is to update ip adresse for IONOS domains.
 It works for RECODD TYPE
  - **A** DNS records with ipv4
  - **AAAA** DNS records type with ipv6
- - **SPF** TXT DNS Record that are SPF with ip inside (SPF records are TXT records for mail server purpose)
+ - **SPF** TXT DNS Record that are SPF with ipv4 inside (SPF records are TXT records for mail server purpose)
  - **CNAME** DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a dns.ionos.fr)
  - **SRV** DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a '0 443 srv.ionos.fr')
  - **MX** DNS records (in this case use the -a param and set the name you want in place of ip  ex : updateDn.sh -a mx00.ionos.fr)
@@ -22,10 +22,10 @@ docker image available :
 
 # WHAT THE PROGRAM DO
  
-Calculating new IP by taking into acount the -a 1.2.3.4 parameter 
-or if -a parameter is not set not set search actual external ip of the network 
-with searching the external ip (ipv4 and ipv6) from Livebox from Orange.
-If Livebox is not present, search external ip with service provider [ifconfig.me](http://ifconfig.me/) for ipv4 
+Calculating new IP by taking into acount the -a 1.2.3.4 parameter if set  
+or if -a parameter is not set search actual external ip (ipv4 and ipv6) of the network 
+by asking to the Livebox from Orange or if Livebox is not present,
+search external ip with service provider [ifconfig.me](http://ifconfig.me/) for ipv4 
 or [ipv4v6.lafibre.info](https://ipv4v6.lafibre.info/) for ipv6
 
 if the record name in param DOMAIN and DNS_TYPE exist,  
@@ -67,7 +67,7 @@ If the record is not found do nothing
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
  > - **PARAMS** = send the parameters to the script ex : -v -a (optional parameter)   
  > - **VERBOSE** = indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run 
- > - **BOX_IP** = local ip of the livebox to be able to catch ipv4 and ipv6 external ip ex : 192.168.0.1 (optional parameter)   
+ > - **BOX_IP** = local ip of the livebox to be able to catch external ipv4 and ipv6 from your box ex : 192.168.0.1 (optional parameter)   
  > - **TZ** =       Time zone of the container     ex : Europe/Paris   
   
  Working with IPv4 or IpV6  

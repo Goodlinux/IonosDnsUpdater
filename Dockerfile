@@ -2,8 +2,7 @@ FROM alpine:latest
 MAINTAINER Ludovic MAILLET <Ludoivc@maillet.me>
 
 ENV API_KEY=xxx.yyyy  \
-    DNS_TYPE=A  \
-    DOMAIN=sub.domain.com \ 
+    DOMAIN=sub.domain.com:AAAA sub.domain2.com:SPF \ 
     CRON_DELAY=*/5   \
     VERBOSE=n  \ 
     BOX_IP=192.168.0.1   \

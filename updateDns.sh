@@ -216,7 +216,7 @@ CheckParamIP()
 #################
 # Get Params
 echo "*=*=**=*==*=*="
-echo "Date : $(date +%Y-%m-%d %H:%M)"
+echo "Date : $(date +'%Y-%m-%d %H:%M')"
 while getopts "ha:f:v" opt; do
      case $opt in
    # display help

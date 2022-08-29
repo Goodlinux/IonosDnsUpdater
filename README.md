@@ -36,7 +36,7 @@ if the record do not exist, create it.
 
 If the record type is SPF  
 then the program search for a TXT spf record and update it with 
-the new ip if the ip in the actual spf record has change.
+the new ip if the ip in the actual spf record has change ipv4 and ipv6.
 If the record is not found do nothing
  
 # GETTING STARTED

@@ -88,12 +88,12 @@ GetRecordZone()
             log "Matching $record_name record found."
             record_ip=$(echo $record | jq '.content' | tr -d '"')
             if [ "$record_ip" = "$ip" ];  then
-                    echo "Ip in $record_name $dnsType : $record_ip is already up to date" >> /dev/stdout
+            	echo "Ip in $record_name $dnsType : $record_ip is already up to date" >> /dev/stdout
             else
-                    record_id=$(echo $record | jq '.id' | tr -d '"')
-                    UpdateDNSRecord
+            	record_id=$(echo $record | jq '.id' | tr -d '"')
+                UpdateDNSRecord
 		    if [ $? = 0 ]; then 
-		        echo "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip" >> /dev/stdout
+		        echo "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip"
 		    fi
         fi
 		    #Get out of the While with ERR 1 mean we found the record
@@ -184,10 +184,10 @@ GetRecordSpf()
                     log "update error, $err : $msg"
                     exit 2
                 else
-                	echo "SPF Record updated"
+                	echo "$domainName SPF Record updated"
                 fi
             else
-                echo "SPF record is up to date no update necessary"
+                echo "$domainName SPF record is up to date no update necessary"
             fi
         fi
     done 
@@ -263,8 +263,8 @@ else
     for record in ${DOMAIN}; do            # DOMAIN Variable should be formated domain="my.domain.net:A test.domain.net:AAAA domain.net:SPF"
         domainName=$(echo $record | cut -d ':' -f 1)
         dnsType=$(echo $record | cut -d ':' -f 2)
-        log "=============================================="
-        log "Update of Domain : $domainName Type : $dnsType"
+        echo "=============================================="
+        echo "Update of Domain : $domainName Type : $dnsType"
         case "$dnsType" in
             A)          
                 # A and SPF Record type need ipv4 adresse

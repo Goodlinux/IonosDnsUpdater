@@ -24,7 +24,7 @@ docker image available :
 
 # WHAT THE PROGRAM DO
  
-Calculating new IP by taking into acount the -a 1.2.3.4 parameter if set  
+Update IP of Ionos DNS records by taking into acount the -a 1.2.3.4 parameter if set  
 or if -a parameter is not set search actual external ip (ipv4 and ipv6) of the network 
 by asking to the Livebox from Orange or if Livebox is not present,
 search external ip with service provider [ifconfig.me](http://ifconfig.me/) for ipv4 

@@ -151,16 +151,24 @@ GetRecordSpf()
         if [ $? = 0 ];  then
             log "Matching spf1 record found."
             # setting new content by cuting actual content with awk and changing the ip after ip4: by the new one
-            new_content=$(echo $record_content | awk -v newip=$ip '
-                    {for (i=1; i<=NF; i++) 
-                        {
-                        if (i > 1) { printf " "}
-                        if ( index($i,"ip4:") == 1  )
-                            { printf "ip4:"newip }
-                        else 
-                            { printf $i }
-                        }
-                    }  ')
+            for string in ${record_content}; do
+            	case $string in
+            		$(echo $string | grep '^v=spf1'))
+            			new_content="v=spf1"
+            		;;
+            		$(echo $string | grep '^ip4:')) 
+            			new_content="$new_content ip4:$ipv4"
+            		;;
+            		$(echo $string | grep '^ip6:'))
+            			new_content="$new_content ip6:$ipv6"
+            		;;
+            		*)
+            			new_content="$new_content $string"
+            			;;
+            	esac
+            	log "SPF record construction str : $string : new record : $new_content"
+            done
+            
             log "spf old record : $record_content"
             log "spf new record : $new_content"
             # if spf record is the same do anything, else update it 
@@ -170,7 +178,7 @@ GetRecordSpf()
                 log "- Updating SPF Record. Record Id :  $record_id"
                 update_url="$base_url$dns_zone/$zone_id/records/$record_id"
                 record_content="{\"content\":\"$new_content\"}"
-                return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
+              #  return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
                 err=$(echo $return | jq '.[] | .code?' );
                 msg=$(echo $return | jq '.[] | .message?' );
                 if [ ! "$err" = ""  ]; then
@@ -216,7 +224,7 @@ CheckParamIP()
 #################
 # Get Params
 echo "*=*=**=*==*=*="
-echo "Date : $(date +'%Y-%m-%d %H:%M')"
+echo "Date : $(date +%Y-%m-%d_%H-%M)"
 while getopts "ha:f:v" opt; do
      case $opt in
    # display help
@@ -256,8 +264,8 @@ else
     for record in ${DOMAIN}; do            # DOMAIN Variable should be formated domain="my.domain.net:A test.domain.net:AAAA domain.net:SPF"
         domainName=$(echo $record | cut -d ':' -f 1)
         dnsType=$(echo $record | cut -d ':' -f 2)
-        echo "=============================================="
-        echo "Update of Domain : $domainName Type : $dnsType"
+        log "=============================================="
+        log "Update of Domain : $domainName Type : $dnsType"
         case "$dnsType" in
             A)          
                 # A and SPF Record type need ipv4 adresse
@@ -268,18 +276,18 @@ else
             AAAA)       
                 # AAAA record type need ipv6 adresse
                 ip=$ipv6
-                log "ip : $ip"
+                echo "ip : $ip"
                 if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
                     GetRecordZone
                     log "record zone AAAA with ip : $ip"
                 else
-                    echo "IPV6 not find, cannot update record"
+                    echo "IPV6 not found, cannot update AAAA record"
                     exit 1
                 fi
                 ;;
             SPF)        
                 # if spf is required, check existing spf TXT record and update it if it contains ip4
-                ip=$ipv4
+                # ip=$ipv4 able to update ipv4 and ipv6 in TXT spf record
                 dnsType=TXT
                 GetRecordSpf
                 ;;

@@ -166,7 +166,7 @@ GetRecordSpf()
             			new_content="$new_content $string"
             			;;
             	esac
-            	log "SPF record construction str : $string : new record : $new_content"
+            	#log "SPF record construction str : $string : new record : $new_content"
             done
             
             log "spf old record : $record_content"

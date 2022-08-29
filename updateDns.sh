@@ -168,7 +168,6 @@ GetRecordSpf()
             	esac
             	#log "SPF record construction str : $string : new record : $new_content"
             done
-            
             log "spf old record : $record_content"
             log "spf new record : $new_content"
             # if spf record is the same do anything, else update it 

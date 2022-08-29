@@ -178,7 +178,7 @@ GetRecordSpf()
                 log "- Updating SPF Record. Record Id :  $record_id"
                 update_url="$base_url$dns_zone/$zone_id/records/$record_id"
                 record_content="{\"content\":\"$new_content\"}"
-              #  return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
+                return=$(curl -s -X PUT  "$update_url"  -H "$output_type"  -H "$curl_param $API_KEY"  -H "$content_type" -d "$record_content")
                 err=$(echo $return | jq '.[] | .code?' );
                 msg=$(echo $return | jq '.[] | .message?' );
                 if [ ! "$err" = ""  ]; then

@@ -82,24 +82,24 @@ GetRecordZone()
     customer_url="$base_url$dns_zone/$zone_id?suffix=$domainName&recordName=$domainName&recordType=$dnsType"
     records=$(curl -X GET $customer_url -H $output_type -H "$curl_param $API_KEY" -s | jq '.records')
     echo $records | jq -c '.[]'  | while read record; do
-        record_name=$(echo $record | jq '.name' | tr -d '"')
-		#echo "name : $record_name"
-        if [ "$record_name" = "$domainName" ];  then
-            log "Matching $record_name record found."
-            record_ip=$(echo $record | jq '.content' | tr -d '"')
-            if [ "$record_ip" = "$ip" ];  then
-            	echo "Ip in $record_name $dnsType : $record_ip is already up to date" >> /dev/stdout
-            else
-            	record_id=$(echo $record | jq '.id' | tr -d '"')
-                UpdateDNSRecord
-		    if [ $? = 0 ]; then 
-		        echo "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip"
-		    fi
-        fi
+    	record_name=$(echo $record | jq '.name' | tr -d '"')
+			#echo "name : $record_name"
+    	if [ "$record_name" = "$domainName" ];  then
+    		log "Matching $record_name record found."
+        	record_ip=$(echo $record | jq '.content' | tr -d '"')
+        	if [ "$record_ip" = "$ip" ];  then
+           		log "Ip in $record_name $dnsType : $record_ip is already up to date" >> /dev/stdout
+        	else
+          		record_id=$(echo $record | jq '.id' | tr -d '"')
+            	UpdateDNSRecord
+				if [ $? = 0 ]; then 
+		    		echo "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip"
+				fi
+    		fi
 		    #Get out of the While with ERR 1 mean we found the record
-		exit 1
-		break
-	fi
+			exit 1
+			break
+		fi
     done 
     if [ ! $? = 1 ]; then
 	    log "Enregistrement non trouvé"

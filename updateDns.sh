@@ -9,6 +9,17 @@ dns_zone="dns/v1/zones"
 output_type="accept: application/json"
 content_type="Content-Type: application/json"
 
+content_type_box="Content-Type: application/x-sah-ws-4-call+json"
+authorisation="Authorization: X-Sah "
+login="Authorization: X-Sah-Login"
+
+box_user="admin"
+box_pwd="BoxMfemaesc?6"
+
+context="/var/tmp/livebox_context"
+cookie="/var/tmp/livebox_cookies"
+
+
 
 #######################
 ##### Functions #######
@@ -39,24 +50,44 @@ log()
 GetExtIpAdress() 
 {
     log "------------------"
-	log "Get ip from external : $ip."
 	# Try to get IP from local LiveBox from Orange
+	#if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+        #	log "Try to get Ip from Box"
+	#	ipv4=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPAddress | tr -d '"')
+	#	ipv6=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPv6Address | tr -d '"')
+	#	log "Box ipv4 : $ipv4"
+	#	log "Box ipv6 : $ipv6"
+	#fi
 	if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
-        log "Try to get Ip from Box"
-		ipv4=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPAddress | tr -d '"')
-		ipv6=$(curl -s -X POST -H "$content_type" -d '{"parameters":{}}'  http://$BOX_IP/sysbus/NMC:getWANStatus | jq -c .result.data.IPv6Address | tr -d '"')
+    		log "Try to get IP from $BOX_IP."
+		# get authorization	
+		curl -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$box_user'","password":"'$box_pwd'"}}'
+		# set authorization context ID
+		CTX=$(cat $context | jq -c .data.contextID | tr -d '"')
+		GRP=$(cat $context | jq -c .data.groups)
+		IE=$CTX'","username":"'$box_user'","groups":'$GRP'}}'
+		ID2=$(tail -n1 $cookie | sed 's/#HttpOnly_'$BOX_IP'\tFALSE\t[/]\tFALSE\t0\t//1' | sed 's/sessid\t/sessid=/1')
+		log "IE : $IE"
+		log "ID2 : $ID2"
+		res=$(curl -s -k "http://"$BOX_IP"/ws" -X POST -H "$content_type" -H "$authorisation"$IE  -H "Cookie: "$ID2 --data-raw '{"service":"NMC","method":"getWANStatus","parameters":{}}')
+		log "res : $res"
+		
+		ipv4=$(echo $res | jq -c .data.IPAddress)
+		ipv6=$(echo $res | jq -c .data.IPv6Address)
 		log "Box ipv4 : $ipv4"
 		log "Box ipv6 : $ipv6"
-    else    # try to get IP from externl source
-        ipv4=$(curl -s ifconfig.me)
-        ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
-        if [ "$ipv6" = "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then  # test if retrieve ip is ipv6
-            log "Get external Ipv6 : $ipv6"
-        else
-           	log "ipv6 isn't valid."
-           	ipv6=""
-        fi
-    fi
+	fi
+    	if [ "$ipv4" ! = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then# try to get IP from externl source
+		log "Try to get Ip from Box external" 
+        	ipv4=$(curl -s ifconfig.me)
+        	ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+        	if [ "$ipv6" = "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then  # test if retrieve ip is ipv6
+            	log "Get external Ipv6 : $ipv6"
+        	else
+           		log "ipv6 isn't valid."
+           		ipv6=""
+        	fi
+    	fi
 }
 
 GetZoneId() 
@@ -258,50 +289,55 @@ else
     # checks if ip was set and retrieves it if not
     CheckParamIP
     # Retrieve DNS Zone Id
-    GetZoneId
     
-    for record in ${DOMAIN}; do            # DOMAIN Variable should be formated domain="my.domain.net:A test.domain.net:AAAA domain.net:SPF"
-        domainName=$(echo $record | cut -d ':' -f 1)
-        dnsType=$(echo $record | cut -d ':' -f 2)
-        echo "=============================================="
-        echo "Update of Domain : $domainName Type : $dnsType"
-        case "$dnsType" in
-            A)          
-                # A and SPF Record type need ipv4 adresse
-                ip=$ipv4
-                log "ip : $ip"
-                GetRecordZone
-                ;;
-            AAAA)       
-                # AAAA record type need ipv6 adresse
-                ip=$ipv6
-                echo "ip : $ip"
-                if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
-                    GetRecordZone
-                    log "record zone AAAA with ip : $ip"
-                else
-                    echo "IPV6 not found, cannot update AAAA record"
-                    exit 1
-                fi
-                ;;
-            SPF)        
-                # if spf is required, check existing spf TXT record and update it if it contains ip4
-                # ip=$ipv4 able to update ipv4 and ipv6 in TXT spf record
-                dnsType=TXT
-                GetRecordSpf
-                ;;
-            TXT | CNAME | MX | SRV)  
-                # for other record type get text from -a parameter
-                if [ "$ip" = "" ]; then 
-                    log "for record $dnsTyype need to have the -a param set"
-                else
-                    log "$dns_Type records updating with $ip text value"
-                    GetRecordZone
-                fi
-                ;;
-            *) 
-                echo "Error: Invalid record type"
-                ;;
-        esac
-    done
+    if [ "$ipv4" ! = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then# try to get IP from externl source
+    	GetZoneId
+    
+    	for record in ${DOMAIN}; do            # DOMAIN Variable should be formated domain="my.domain.net:A test.domain.net:AAAA domain.net:SPF"
+        	domainName=$(echo $record | cut -d ':' -f 1)
+	        dnsType=$(echo $record | cut -d ':' -f 2)
+        	echo "=============================================="
+	        echo "Update of Domain : $domainName Type : $dnsType"
+	        case "$dnsType" in
+	            A)          
+ 	               # A and SPF Record type need ipv4 adresse
+ 	               ip=$ipv4
+ 	               log "ip : $ip"
+ 	               GetRecordZone
+  	              ;;
+  	          AAAA)       
+   	             # AAAA record type need ipv6 adresse
+   	             ip=$ipv6
+        	        echo "ip : $ip"
+                	if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
+ 	                   GetRecordZone
+  	                  log "record zone AAAA with ip : $ip"
+  	              else
+  	                  echo "IPV6 not found, cannot update AAAA record"
+  	                  exit 1
+   	             fi
+   	             ;;
+ 	           SPF)        
+	                # if spf is required, check existing spf TXT record and update it if it contains ip4
+	                # ip=$ipv4 able to update ipv4 and ipv6 in TXT spf record
+	                dnsType=TXT
+	                GetRecordSpf
+   	             ;;
+ 	           TXT | CNAME | MX | SRV)  
+	                # for other record type get text from -a parameter
+  	              if [ "$ip" = "" ]; then 
+  	                  log "for record $dnsTyype need to have the -a param set"
+        	        else
+  	                  log "$dns_Type records updating with $ip text value"
+                	    GetRecordZone	
+	                fi
+        	        ;;
+		*) 
+	                echo "Error: Invalid record type"
+ 	               ;;
+	        esac
+	    done
+	else
+		log "no ip available, nothingto update"
+	fi
 fi

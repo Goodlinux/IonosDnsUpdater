@@ -13,7 +13,7 @@ content_type_box="Content-Type: application/x-sah-ws-4-call+json"
 authorisation="Authorization: X-Sah "
 login="Authorization: X-Sah-Login"
 
-box_user="admin"
+="admin"
 box_pwd="BoxMfemaesc?6"
 
 context="/var/tmp/livebox_context"
@@ -61,11 +61,11 @@ GetExtIpAdress()
 	if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
     		log "Try to get IP from $BOX_IP."
 		# get authorization	
-		curl -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$box_user'","password":"'$box_pwd'"}}'
+		curl -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$BOX_USER'","password":"'$BOX_PASSWORD'"}}'
 		# set authorization context ID
 		CTX=$(cat $context | jq -c .data.contextID | tr -d '"')
 		GRP=$(cat $context | jq -c .data.groups)
-		IE=$CTX'","username":"'$box_user'","groups":'$GRP'}}'
+		IE=$CTX'","username":"'$BOX_USER'","groups":'$GRP'}}'
 		ID2=$(tail -n1 $cookie | sed 's/#HttpOnly_'$BOX_IP'\tFALSE\t[/]\tFALSE\t0\t//1' | sed 's/sessid\t/sessid=/1')
 		log "IE : $IE"
 		log "ID2 : $ID2"

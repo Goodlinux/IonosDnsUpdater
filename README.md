@@ -70,7 +70,9 @@ If the record is not found do nothing
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
  > - **PARAMS** = send the parameters to the script ex : -v -a (optional parameter)   
  > - **VERBOSE** = indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run 
- > - **BOX_IP** = local ip of the livebox to be able to catch external ipv4 and ipv6 from your box ex : 192.168.0.1 (optional parameter)   
+ > - **BOX_IP** = local ip of the livebox to be able to catch external ipv4 and ipv6 from your box ex : 192.168.0.1 (optional parameter)  
+ > - **BOX_USER** = user to be connected to the LiveBox 5 ex : admin (optional parameter) 
+ > - **BOX_PASSWORD** = password to be connected to the LiveBox 5 ex : monpassword (optional parameter)   
  > - **TZ** =       Time zone of the container     ex : Europe/Paris   
   
  Working with IPv4 or IpV6  

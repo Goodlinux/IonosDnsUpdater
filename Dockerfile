@@ -7,7 +7,7 @@ ENV API_KEY=xxx.yyyy  \
     VERBOSE=n  \ 
     BOX_IP=192.168.0.1   \
     BOX_USER=admin   \
-    BOX_PASSWORD=xxxx    \
+    BOX_PASSWORD=xxxx   \
     TZ=Europe/Paris
 
 RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano \ 

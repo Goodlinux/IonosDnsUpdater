@@ -18,8 +18,7 @@ cookie="/var/tmp/livebox_cookies"
 #BOX_IP=192.168.1.2
 ipv4=""
 ipv6=""
-export ipv4
-export ipv6
+
 
 #######################
 ##### Functions #######
@@ -47,10 +46,9 @@ log()
 	fi
 }
 
-
 GetIpFromBox()
 {
-	log "Try to get IP from $BOX_IP."
+	log "Get IP from $BOX_IP."
 	# get authorization	
 	curl -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type_box" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$BOX_USER'","password":"'$BOX_PASSWORD'"}}'
 	# set authorization context ID
@@ -62,16 +60,18 @@ GetIpFromBox()
 #	log "ID2 : $ID2"
 	res=$(curl -s -k "http://"$BOX_IP"/ws" -X POST -H "$content_type_box" -H "$authorisation"$IE  -H "Cookie: "$ID2 --data-raw '{"service":"NMC","method":"getWANStatus","parameters":{}}')
 #	log "res : $res"
-	ipv4=$(echo $res | jq -c .data.IPAddress)
-	ipv6=$(echo $res | jq -c .data.IPv6Address)
+	ipv4=$(echo $res | jq -c .data.IPAddress | tr -d '"')
+	ipv6=$(echo $res | jq -c .data.IPv6Address | tr -d '"')
+
 }
 
 
 GetIpFromExt()
 {
-	log "Try to get Ip from external provider" 
+	log "Get Ip from external provider" 
     ipv4=$(curl -s ifconfig.me)
     ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+
 }
 
 
@@ -81,21 +81,15 @@ GetExtIpAdress()
 	if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $BOX_IP ] ; then
 		GetIpFromBox
 	fi
-    	
+
     if [ "$ipv4" = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $ipv4 ] ;  then
 		log "Ipv4 from Box : $ipv4"
+
 	else
 		# try to get IP from externl source
 		GetIpFromExt
 	fi
-	
-	if [ "$ipv6" = "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ] && [ -n $ipv6 ] ;  then  
-    	# test if retrieve ip is ipv6
-       	log "Get external Ipv6 : $ipv6"
-    else
-      		log "ipv6 isn't valid."
-       		ipv6=""
-    fi
+
     log "ipv4 : $ipv4"
 	log "ipv6 : $ipv6"
 }
@@ -259,7 +253,6 @@ CheckParamIP()
     fi
 }
 
-
 ProcessDnsUpdate()
 {
 		# Get Zone Id to update all records
@@ -283,7 +276,7 @@ ProcessDnsUpdate()
 					# AAAA record type need ipv6 adresse
 					ip=$ipv6
 					echo "ip : $ip"
-					if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then
+					if [ "$ip" = "$(echo $ip | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ] && [ -n $ipv6 ] ;  then
 						GetRecordZone
 						log "record zone AAAA with ip : $ip"
 					else
@@ -312,7 +305,6 @@ ProcessDnsUpdate()
 			esac
 		done	
 }
-
 
 
 #################

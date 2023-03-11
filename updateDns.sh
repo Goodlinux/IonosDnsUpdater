@@ -13,8 +13,8 @@ content_type_box="Content-Type: application/x-sah-ws-4-call+json"
 authorisation="Authorization: X-Sah "
 login="Authorization: X-Sah-Login"
 
-="admin"
-box_pwd="BoxMfemaesc?6"
+BOX_USER="admin"
+BOX_PASSWORD="BoxMfemaesc?6"
 
 context="/var/tmp/livebox_context"
 cookie="/var/tmp/livebox_cookies"

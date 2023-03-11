@@ -77,12 +77,14 @@ GetExtIpAdress()
 		log "Box ipv4 : $ipv4"
 		log "Box ipv6 : $ipv6"
 	fi
-    	if [ "$ipv4" ! = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then# try to get IP from externl source
+    	if [ "$ipv4" ! = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ]; then
+		# try to get IP from externl source
 		log "Try to get Ip from Box external" 
         	ipv4=$(curl -s ifconfig.me)
         	ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
-        	if [ "$ipv6" = "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then  # test if retrieve ip is ipv6
-            	log "Get external Ipv6 : $ipv6"
+        	if [ "$ipv6" = "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}')" ];  then  
+			# test if retrieve ip is ipv6
+            		log "Get external Ipv6 : $ipv6"
         	else
            		log "ipv6 isn't valid."
            		ipv6=""

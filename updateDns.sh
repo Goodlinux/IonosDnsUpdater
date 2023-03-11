@@ -15,10 +15,10 @@ login="Authorization: X-Sah-Login"
 
 context="/var/tmp/livebox_context"
 cookie="/var/tmp/livebox_cookies"
-#BOX_IP=192.168.1.2
+rm /var/tmp/livebox*
+
 ipv4=""
 ipv6=""
-
 
 #######################
 ##### Functions #######
@@ -50,7 +50,7 @@ GetIpFromBox()
 {
 	log "Get IP from $BOX_IP."
 	# get authorization	
-	curl -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type_box" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$BOX_USER'","password":"'$BOX_PASSWORD'"}}'
+	curl -s -o $context -k "http://"$BOX_IP"/ws" -c $cookie -X POST --compressed -H "$login" -H "$content_type_box" --data-raw '{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'$BOX_USER'","password":"'$BOX_PASSWORD'"}}'
 	# set authorization context ID
 	CTX=$(cat $context | jq -c .data.contextID | tr -d '"')
 	GRP=$(cat $context | jq -c .data.groups)
@@ -62,7 +62,6 @@ GetIpFromBox()
 #	log "res : $res"
 	ipv4=$(echo $res | jq -c .data.IPAddress | tr -d '"')
 	ipv6=$(echo $res | jq -c .data.IPv6Address | tr -d '"')
-
 }
 
 
@@ -71,7 +70,6 @@ GetIpFromExt()
 	log "Get Ip from external provider" 
     ipv4=$(curl -s ifconfig.me)
     ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
-
 }
 
 

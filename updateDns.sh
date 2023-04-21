@@ -46,6 +46,22 @@ log()
 	fi
 }
 
+##########################################
+### log information on log server      ###
+### $1 = log level name                ###
+### valid values are : emerg alert     ###
+### crit err warning notice info debug ###
+### $2 : message to log                ###
+##########################################
+logNas()
+{
+if [ -e /usr/bin/logger ]; then
+	logger -n $LOG_SRV -p user.$1 -s "$2"
+else
+	echo "$2" >> /dev/stdout
+fi
+}
+
 GetIpFromBox()
 {
 	log "Get IP from $BOX_IP."
@@ -121,13 +137,13 @@ GetRecordZone()
     		log "Matching $record_name record found."
         	record_ip=$(echo $record | jq '.content' | tr -d '"')
         	if [ "$record_ip" = "$ip" ];  then
-           		log "Ip in $record_name $dnsType : $record_ip is already up to date" >> /dev/stdout
+           		logNas "info" "Ip in $record_name $dnsType : $record_ip is already up to date"
         	else
           		record_id=$(echo $record | jq '.id' | tr -d '"')
-            	UpdateDNSRecord
-				if [ $? = 0 ]; then 
-		    		echo "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip"
-				fi
+            		UpdateDNSRecord
+			if [ $? = 0 ]; then 
+		    		logNas "info" "Record $record_name $dnsType ip updated old ip : $record_ip   New ip : $ip"
+			fi
     		fi
 		    #Get out of the While with ERR 1 mean we found the record
 			exit 1
@@ -135,7 +151,7 @@ GetRecordZone()
 		fi
     done 
     if [ ! $? = 1 ]; then
-	    log "Enregistrement non trouvé"
+	    logNas "info" "Enregistrement non trouvé"
 	    CreateDNSRecord
     fi
 }
@@ -149,7 +165,7 @@ UpdateDNSRecord()
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [ ! "$err" = ""  ]; then
-	    log "update error, $err : $msg"
+		logNas "warning" "update error, $err : $msg"
 		exit 2
 	fi
 }
@@ -159,13 +175,13 @@ CreateDNSRecord()
 	log "- Creating DNS Record $domainName $dnsType with ip : $ip"
 	create_url="$base_url$dns_zone/$zone_id/records"
 	record_content="[{\"name\":\"$domainName\",\"type\":\"$dnsType\",\"content\":\"$ip\",\"ttl\":60,\"prio\":0,\"disabled\":false}]"
-    return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
+	return=$(curl -s -X POST "$create_url" -H "$output_type" -H "$curl_param $API_KEY" -H "$content_type" -d "$record_content")
 	err=$(echo $return | jq '.[] | .code?' );
 	msg=$(echo $return | jq '.[] | .message?' );
 	if [ "$err" = "" ] || [ "$err" = "null"  ]; then
-	    log "creation successfull"
+		logNas "info" "Creating DNS Record $domainName $dnsType with ip : $ip successfull"
 	else
-	    log "creation error, $err : $msg"
+		logNas "warning" "DNS Record $domainName $dnsType creation error, $err : $msg"
 		exit 2
 	fi
 }
@@ -214,13 +230,13 @@ GetRecordSpf()
                 err=$(echo $return | jq '.[] | .code?' );
                 msg=$(echo $return | jq '.[] | .message?' );
                 if [ ! "$err" = ""  ]; then
-                    log "update error, $err : $msg"
+                    logNas "warning" "SPF Record for $domainName Record Id :  $record_id update error, $err : $msg"
                     exit 2
                 else
-                	echo "$domainName SPF Record updated"
+                	logNas "info" "$domainName SPF Record updated"
                 fi
             else
-                echo "$domainName SPF record is up to date no update necessary"
+                logNas "info" "$domainName SPF record is up to date no update necessary"
             fi
         fi
     done 
@@ -278,7 +294,7 @@ ProcessDnsUpdate()
 						GetRecordZone
 						log "record zone AAAA with ip : $ip"
 					else
-						echo "IPV6 not found, cannot update AAAA record"
+						lognas "warning" "IPV6 not found, cannot update AAAA record"
 						exit 1
 					fi
 					;;
@@ -298,7 +314,7 @@ ProcessDnsUpdate()
 					fi
 					;;
 				*) 
-					echo "Error: Invalid record type"
+					lognas "err" "$dnsType is an invalid record type"
 					;;
 			esac
 		done	
@@ -353,5 +369,5 @@ elif [ "$ipv6" =  "$(echo $ipv6 | grep  -E '^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1
 	log "Ipv6 Ok Processing"
 	ProcessDnsUpdate
 else
-	log "no ip available, nothing to update"
+	logNas "warning" "no ip available, nothing to update"
 fi

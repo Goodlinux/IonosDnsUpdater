@@ -56,7 +56,7 @@ log()
 logNas()
 {
 if [ -e /usr/bin/logger ]; then
-	logger -n $LOG_SRV -p user.$1 -s "$2"
+	logger -n $LOG_SRV -p user.$1 -t "$HOSTNAME" -s "$2"
 else
 	echo "$2" >> /dev/stdout
 fi

@@ -1,0 +1,14 @@
+#
+# Useful references:
+# https://docs.docker.com/compose/compose-file/
+# https://docs.docker.com/compose/reference/overview/#use--f-to-specify-name-and-path-of-one-or-more-compose-files
+# https://docs.docker.com/compose/reference/envvars/
+#
+
+version: '3'
+
+services:
+  ionosdnsupdater:
+    image: goodlinux/ionosdnsupdater:latest
+    container_name: ionosdnsupdater-dynip
+    restart: always

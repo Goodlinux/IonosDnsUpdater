@@ -2,21 +2,21 @@ FROM alpine:latest
 MAINTAINER Ludovic MAILLET <Ludoivc@maillet.me>
 
 ENV API_KEY=xxx.yyyy  \
-    DOMAIN="sub.domain.com:AAAA sub.domain2.com:SPF" \
+    DOMAIN="sub.domain.com:AAAA sub.domain2.com:SPF" \ 
     CRON_DELAY=*/5   \
-    VERBOSE=n  \
+    VERBOSE=n  \ 
     BOX_IP=192.168.0.1   \
     BOX_USER=admin   \
     BOX_PASSWORD=xxxx   \
     LOG_SRV=192.168.0.1    \
-    HOSTNAME=DynIp      \
+    HOSTNAME=DynIp	\
     TZ=Europe/Paris
 
-RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano logger \
+RUN apk -U upgrade && apk add curl apk-cron tzdata jq nano logger \ 
   && cd /usr/local/bin/ && curl -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh \
-  && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
-  && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg.sh \
-  && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg.sh \
+  && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \ 
+  && echo "apk -U upgrade "                                                               > /usr/local/bin/updtPkg.sh \ 
+  && echo "cd /usr/local/bin/"                                                            >> /usr/local/bin/updtPkg.sh \  
   && echo "curl -s -O https://raw.githubusercontent.com/Goodlinux/IonosDnsUpdater/master/updateDns.sh" >> /usr/local/bin/updtPkg.sh \
   && echo "chmod a+x /usr/local/bin/*"                                                    >> /usr/local/bin/updtPkg.sh \
   && echo "#! /bin/sh"                                                                     > /usr/local/bin/entrypoint.sh \

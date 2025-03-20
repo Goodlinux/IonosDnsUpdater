@@ -13,7 +13,7 @@
       "env": [
         {
           "name": "API_KEY",
-          "label": "Ionos API key to update DNS"
+          "label": "Ionos API key to update DNS",
           "default": "xyz",
           "description": "Ionos API key to update DNS, ask a API key on your ionos account",
           "preset": true
@@ -73,7 +73,7 @@
           "description": "indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run",
           "preset": true
         }
-      ],
+      ]
     },
     {
       "id": 2,
@@ -88,6 +88,7 @@
         {
           "data": "/data/"
         }
+      ]
     },
     {
       "id": 3,
@@ -101,7 +102,7 @@
       "env": [
         {
           "name": "SQL_SERV",
-          "label": "Address of SQL server to store results"
+          "label": "Address of SQL server to store results",
           "default": "192.168.0.0",
           "description": "Address of SQL server to store results",
           "preset": true
@@ -189,9 +190,10 @@
     		"image": "vaultwarden/server:alpine",
     		"ports": ["80/tcp", "3012/tcp"],
 			"volumes": [
-        {
-          "data": "/data/"
-        }
+        		{
+        			"data": "/data/"
+        		}
+        	]
     }
       ]
     }

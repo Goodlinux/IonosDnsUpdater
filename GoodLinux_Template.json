@@ -1,201 +1,215 @@
 {
-  "version": "1",
-  "templates": [
-    {
-      "id": 1,
-      "type": 1,
-      "title": "ionosDnsUpdater",
-      "description": "Updater for Ionos DNS provider using Livebox 5 to get the external IP",
-      "categories": ["development"],
-      "platform": "linux",
-      "image": "goodlinux/ionosdnsupdater:latest",
-      "interactive": true,
-      "env": [
-        {
-          "name": "API_KEY",
-          "label": "Ionos API key to update DNS",
-          "default": "xyz",
-          "description": "Ionos API key to update DNS, ask a API key on your ionos account",
-          "preset": true
-        },
-        {
-          "name": "DOMAIN",
-          "label": "Ionos Domain to update",
-          "default": "mydomain@nomdomain.ext",
-          "description": "name of the domain/subdomain to update : dns-type. for multiple 'domain:type' should be separated by space ex : DOMAIN='my.domain.net:A test.domain.net:AAAA domain.net:SPF'",
-          "preset": true
-        },
-        {
-          "name": "BOX_IP",
-          "label": "IP Adress of the Livebox",
-          "default": "192.168.0.0",
-          "description": "IP Adresse of the Livebox 5",
-          "preset": true
-        },
-        {
-          "name": "BOX_USER",
-          "label": "username of the box access",
-          "default": "administrator",
-          "description": "name of the user to give access to the Livebox",
-          "preset": true
-        },
-        {
-          "name": "BOX_PASSWORD",
-          "label": "Password of the box",
-          "default": "mypassword",
-          "description": "password of the Livebox",
-          "preset": true
-        },
-        {
-          "name": "LOG_SRV",
-          "label": "Ip address of the Log server",
-          "default": "192.168.1.255",
-          "description": "IP Adress of the log server"
-        },
-        {
-          "name": "HOSTNAME",
-          "label": "Hostname of the container",
-          "default": "ionosDNSUpdater",
-          "description": "Hostname of the container",
-          "preset": true
-        },
-        {
-          "name": "TZ",
-          "label": "Time Zone",
-          "default": "Europe/Paris",
-          "description": "Time zone used for the container",
-          "preset": true
-        },
-        {
-          "name": "VERBOSE",
-          "label": "Make the usage of the container verbose",
-          "default": "NO",
-          "description": "indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run",
-          "preset": true
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "type": 1,
-      "title": "Bitwarden",
-      "description": "Password manager, password generator, passkey ...",
-      "categories": ["development"],
-      "platform": "linux",
-      "image": "vaultwarden/server:alpine",
-      "ports": ["80/tcp", "3012/tcp"],
-	  "volumes": [
-        {
-          "data": "/data/"
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "type": 1,
-      "title": "debitMonitor",
-      "description": "Monitor the internet speed from Livebox 5",
-      "categories": ["development"],
-      "platform": "linux",
-      "image": "goodlinux/debitmonitor:latest",
-      "interactive": true,
-      "env": [
-        {
-          "name": "SQL_SERV",
-          "label": "Address of SQL server to store results",
-          "default": "192.168.0.0",
-          "description": "Address of SQL server to store results",
-          "preset": true
-        },
-        {
-          "name": "SQL_PORT",
-          "label": "Port of SQL server to store results",
-          "default": "3306",
-          "description": "Port of SQL server to store results",
-          "preset": true
-        },
-        {
-          "name": "SQL_USER",
-          "label": "SQL User to access the database",
-          "default": "username",
-          "description": "SQL User name to access the database",
-          "preset": true
-        },
-        {
-          "name": "SQL_PASS",
-          "label": "SQL user password to access the database",
-          "description": "SQL user password to access the database"
-        },
-        {
-          "name": "SQL_BASE",
-          "label": "SQL Database Name",
-          "default": "databaseName",
-          "description": "SQL Database name",
-          "preset": true
-        },
-        {
-          "name": "CRON_MINUT_DELAY",
-          "label": "Delay to launch the check job",
-          "default": "60",
-          "description": "Delay in minutes for the CronJob to check the internet debit"
-        },
-        {
-          "name": "HOSTNAME",
-          "label": "Hostname of the container",
-          "default": "ionosDNSUpdater",
-          "description": "Hostname of the container",
-          "preset": true
-        },
-        {
-          "name": "BOX_IP",
-          "label": "IP Adress of the Livebox",
-          "default": "192.168.0.0",
-          "description": "IP Adresse of the Livebox 5",
-          "preset": true
-        },
-        {
-          "name": "BOX_USER",
-          "label": "username of the box access",
-          "default": "administrator",
-          "description": "name of the user to give access to the Livebox",
-          "preset": true
-        },
-        {
-          "name": "BOX_PASSWORD",
-          "label": "Password of the box",
-          "default": "mypassword",
-          "description": "password of the Livebox",
-          "preset": true
-        },
-        {
-          "name": "LOG_SRV",
-          "label": "Ip address of the Log server",
-          "default": "192.168.1.255",
-          "description": "IP Adress of the log server"
-        }, 
-        {
-          "name": "TZ",
-          "label": "Time Zone",
-          "default": "Europe/Paris",
-          "description": "Time zone used for the container",
-          "preset": true
-        },
-    	{
-    		"id": 4,
-    		"type": 1,
-    		"title": "plantuml",
-    		"description": "diagram generator ...",
-    		"categories": ["development"],
-    		"platform": "linux",
-    		"image": "vaultwarden/server:alpine",
-    		"ports": ["80/tcp", "3012/tcp"],
-			"volumes": [
-        		{
-        			"data": "/data/"
-        		}
-        	]
-    }
-      ]
-    }
-  ]
+   "version":"3",
+   "templates":[
+      {
+         "id":1,
+         "type":1,
+         "title":"ionosDnsUpdater",
+         "description":"Updater for Ionos DNS provider using Livebox 5 to get the external IP",
+         "categories":[
+            "development"
+         ],
+         "platform":"linux",
+         "image":"goodlinux/ionosdnsupdater:latest",
+         "interactive":true,
+         "env":[
+            {
+               "name":"API_KEY",
+               "label":"Ionos API key to update DNS",
+               "default":"xyz",
+               "description":"Ionos API key to update DNS, ask a API key on your ionos account",
+               "preset":true
+            },
+            {
+               "name":"DOMAIN",
+               "label":"Ionos Domain to update",
+               "default":"mydomain@nomdomain.ext",
+               "description":"name of the domain/subdomain to update : dns-type. for multiple 'domain:type' should be separated by space ex : DOMAIN='my.domain.net:A test.domain.net:AAAA domain.net:SPF'",
+               "preset":true
+            },
+            {
+               "name":"BOX_IP",
+               "label":"IP Adress of the Livebox",
+               "default":"192.168.0.0",
+               "description":"IP Adresse of the Livebox 5",
+               "preset":true
+            },
+            {
+               "name":"BOX_USER",
+               "label":"username of the box access",
+               "default":"administrator",
+               "description":"name of the user to give access to the Livebox",
+               "preset":true
+            },
+            {
+               "name":"BOX_PASSWORD",
+               "label":"Password of the box",
+               "default":"mypassword",
+               "description":"password of the Livebox",
+               "preset":true
+            },
+            {
+               "name":"LOG_SRV",
+               "label":"Ip address of the Log server",
+               "default":"192.168.1.255",
+               "description":"IP Adress of the log server"
+            },
+            {
+               "name":"HOSTNAME",
+               "label":"Hostname of the container",
+               "default":"ionosDNSUpdater",
+               "description":"Hostname of the container",
+               "preset":true
+            },
+            {
+               "name":"TZ",
+               "label":"Time Zone",
+               "default":"Europe/Paris",
+               "description":"Time zone used for the container",
+               "preset":true
+            },
+            {
+               "name":"VERBOSE",
+               "label":"Make the usage of the container verbose",
+               "default":"NO",
+               "description":"indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run",
+               "preset":true
+            }
+         ]
+      },
+      {
+         "id":2,
+         "type":1,
+         "title":"Bitwarden",
+         "description":"Password manager, password generator, passkey ...",
+         "categories":[
+            "development"
+         ],
+         "platform":"linux",
+         "image":"vaultwarden/server:alpine",
+         "ports":[
+            "80/tcp",
+            "3012/tcp"
+         ],
+         "volumes":[
+            {
+               "data":"/data/"
+            }
+         ]
+      },
+      {
+         "id":3,
+         "type":1,
+         "title":"debitMonitor",
+         "description":"Monitor the internet speed from Livebox 5",
+         "categories":[
+            "development"
+         ],
+         "platform":"linux",
+         "image":"goodlinux/debitmonitor:latest",
+         "interactive":true,
+         "env":[
+            {
+               "name":"SQL_SERV",
+               "label":"Address of SQL server to store results",
+               "default":"192.168.0.0",
+               "description":"Address of SQL server to store results",
+               "preset":true
+            },
+            {
+               "name":"SQL_PORT",
+               "label":"Port of SQL server to store results",
+               "default":"3306",
+               "description":"Port of SQL server to store results",
+               "preset":true
+            },
+            {
+               "name":"SQL_USER",
+               "label":"SQL User to access the database",
+               "default":"username",
+               "description":"SQL User name to access the database",
+               "preset":true
+            },
+            {
+               "name":"SQL_PASS",
+               "label":"SQL user password to access the database",
+               "description":"SQL user password to access the database"
+            },
+            {
+               "name":"SQL_BASE",
+               "label":"SQL Database Name",
+               "default":"databaseName",
+               "description":"SQL Database name",
+               "preset":true
+            },
+            {
+               "name":"CRON_MINUT_DELAY",
+               "label":"Delay to launch the check job",
+               "default":"60",
+               "description":"Delay in minutes for the CronJob to check the internet debit"
+            },
+            {
+               "name":"HOSTNAME",
+               "label":"Hostname of the container",
+               "default":"ionosDNSUpdater",
+               "description":"Hostname of the container",
+               "preset":true
+            },
+            {
+               "name":"BOX_IP",
+               "label":"IP Adress of the Livebox",
+               "default":"192.168.0.0",
+               "description":"IP Adresse of the Livebox 5",
+               "preset":true
+            },
+            {
+               "name":"BOX_USER",
+               "label":"username of the box access",
+               "default":"administrator",
+               "description":"name of the user to give access to the Livebox",
+               "preset":true
+            },
+            {
+               "name":"BOX_PASSWORD",
+               "label":"Password of the box",
+               "default":"mypassword",
+               "description":"password of the Livebox",
+               "preset":true
+            },
+            {
+               "name":"LOG_SRV",
+               "label":"Ip address of the Log server",
+               "default":"192.168.1.255",
+               "description":"IP Adress of the log server"
+            },
+            {
+               "name":"TZ",
+               "label":"Time Zone",
+               "default":"Europe/Paris",
+               "description":"Time zone used for the container",
+               "preset":true
+            },
+            {
+               "id":4,
+               "type":1,
+               "title":"plantuml",
+               "description":"diagram generator ...",
+               "categories":[
+                  "development"
+               ],
+               "platform":"linux",
+               "image":"vaultwarden/server:alpine",
+               "ports":[
+                  "80/tcp",
+                  "3012/tcp"
+               ],
+               "volumes":[
+                  {
+                     "data":"/data/"
+                  }
+               ]
+            }
+         ]
+      }
+   ]
 }

@@ -71,8 +71,8 @@
             {
                "name":"VERBOSE",
                "label":"Make the usage of the container verbose",
-               "default":"NO",
-               "description":"indicate that you want to run with verbose mode : ex : y if you want to have more detail on the run",
+               "default":"N",
+               "description":"indicate that you want to run with verbose mode : ex : y/o/Y/O if you want to have more detail on the run",
                "preset":true
             }
          ]

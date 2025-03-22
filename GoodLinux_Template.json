@@ -188,26 +188,26 @@
                "default":"Europe/Paris",
                "description":"Time zone used for the container",
                "preset":true
-            },
+            }
+         ]
+      },
+      {
+         "id":4,
+         "type":1,
+         "title":"plantuml",
+         "description":"diagram generator ...",
+         "categories":[
+            "development"
+         ],
+         "platform":"linux",
+         "image":"vaultwarden/server:alpine",
+         "ports":[
+            "80/tcp",
+            "3012/tcp"
+         ],
+         "volumes":[
             {
-               "id":4,
-               "type":1,
-               "title":"plantuml",
-               "description":"diagram generator ...",
-               "categories":[
-                  "development"
-               ],
-               "platform":"linux",
-               "image":"vaultwarden/server:alpine",
-               "ports":[
-                  "80/tcp",
-                  "3012/tcp"
-               ],
-               "volumes":[
-                  {
-                     "data":"/data/"
-                  }
-               ]
+               "data":"/data/"
             }
          ]
       }

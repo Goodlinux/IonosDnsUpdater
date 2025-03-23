@@ -204,10 +204,53 @@
          "ports":[
             "80/tcp",
             "3012/tcp"
+         ]
+      },
+      {
+         "id":5,
+         "type":1,
+         "title":"proxytor",
+         "description":"tor proxy  ...",
+         "categories":[
+            "development"
          ],
-         "volumes":[
+         "platform":"linux",
+         "image":"goodlinux/proxy-tor:latest",
+         "ports":[
+            "8118/tcp",
+            "9050/tcp"
+         ],
+         "env":[
             {
-               "data":"/data/"
+               "name":"EXIT_NODE",
+               "label":"Liste des noeuds de sortie du proxy",
+               "default":"{ca},{us},{de},{nl},{be}",
+               "description":"Liste des noeuds de sortie du proxy separés par des ',' ex : {ca},{us}",
+               "preset":true
+            }
+         ]
+      },
+      {
+         "id":6,
+         "type":1,
+         "title":"proxytor US",
+         "description":"tor proxy exit node us ...",
+         "categories":[
+            "development"
+         ],
+         "platform":"linux",
+         "image":"goodlinux/proxy-tor:latest",
+         "ports":[
+            "8118/tcp",
+            "9050/tcp"
+         ],
+         "env":[
+            {
+               "name":"EXIT_NODE",
+               "label":"Liste des noeuds de sortie du proxy",
+               "default":"{us}",
+               "description":"Liste des noeuds de sortie du proxy separés par des ',' ex : {ca},{us}",
+               "preset":true
             }
          ]
       }

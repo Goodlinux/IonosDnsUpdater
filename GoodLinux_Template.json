@@ -17,36 +17,31 @@
           "name": "API_KEY",
           "label": "Ionos API key to update DNS",
           "default": "xyz",
-          "description": "Ionos API key to update DNS, ask a API key on your ionos account",
-          "preset": true
+          "description": "Ionos API key to update DNS, ask a API key on your ionos account"
         },
         {
           "name": "DOMAIN",
           "label": "Ionos Domain to update",
           "default": "mydomain@nomdomain.ext",
-          "description": "name of the domain/subdomain to update : dns-type. for multiple 'domain:type' should be separated by space ex : DOMAIN='my.domain.net:A test.domain.net:AAAA domain.net:SPF'",
-          "preset": true
+          "description": "name of the domain/subdomain to update : dns-type. for multiple 'domain:type' should be separated by space ex : DOMAIN='my.domain.net:A test.domain.net:AAAA domain.net:SPF'"
         },
         {
           "name": "BOX_IP",
           "label": "IP Adress of the Livebox",
           "default": "192.168.0.0",
-          "description": "IP Adresse of the Livebox 5",
-          "preset": true
+          "description": "IP Adresse of the Livebox 5"
         },
         {
           "name": "BOX_USER",
           "label": "username of the box access",
           "default": "administrator",
-          "description": "name of the user to give access to the Livebox",
-          "preset": true
+          "description": "name of the user to give access to the Livebox"
         },
         {
           "name": "BOX_PASSWORD",
           "label": "Password of the box",
           "default": "mypassword",
-          "description": "password of the Livebox",
-          "preset": true
+          "description": "password of the Livebox"
         },
         {
           "name": "LOG_SRV",
@@ -58,22 +53,19 @@
           "name": "HOSTNAME",
           "label": "Hostname of the container",
           "default": "ionosDNSUpdater",
-          "description": "Hostname of the container",
-          "preset": true
+          "description": "Hostname of the container"
         },
         {
           "name": "TZ",
           "label": "Time Zone",
           "default": "Europe/Paris",
-          "description": "Time zone used for the container",
-          "preset": true
+          "description": "Time zone used for the container"
         },
         {
           "name": "VERBOSE",
           "label": "Make the usage of the container verbose",
           "default": "N",
-          "description": "indicate that you want to run with verbose mode : ex : y/o/Y/O if you want to have more detail on the run",
-          "preset": true
+          "description": "indicate that you want to run with verbose mode : ex : y/o/Y/O if you want to have more detail on the run"
         }
       ]
     },
@@ -113,22 +105,19 @@
           "name": "SQL_SERV",
           "label": "Address of SQL server to store results",
           "default": "192.168.0.0",
-          "description": "Address of SQL server to store results",
-          "preset": true
+          "description": "Address of SQL server to store results"
         },
         {
           "name": "SQL_PORT",
           "label": "Port of SQL server to store results",
           "default": "3306",
-          "description": "Port of SQL server to store results",
-          "preset": true
+          "description": "Port of SQL server to store results"
         },
         {
           "name": "SQL_USER",
           "label": "SQL User to access the database",
           "default": "username",
-          "description": "SQL User name to access the database",
-          "preset": true
+          "description": "SQL User name to access the database"
         },
         {
           "name": "SQL_PASS",
@@ -139,8 +128,7 @@
           "name": "SQL_BASE",
           "label": "SQL Database Name",
           "default": "databaseName",
-          "description": "SQL Database name",
-          "preset": true
+          "description": "SQL Database name"
         },
         {
           "name": "CRON_MINUT_DELAY",
@@ -152,29 +140,25 @@
           "name": "HOSTNAME",
           "label": "Hostname of the container",
           "default": "ionosDNSUpdater",
-          "description": "Hostname of the container",
-          "preset": true
+          "description": "Hostname of the container"
         },
         {
           "name": "BOX_IP",
           "label": "IP Adress of the Livebox",
           "default": "192.168.0.0",
-          "description": "IP Adresse of the Livebox 5",
-          "preset": true
+          "description": "IP Adresse of the Livebox 5"
         },
         {
           "name": "BOX_USER",
           "label": "username of the box access",
           "default": "administrator",
-          "description": "name of the user to give access to the Livebox",
-          "preset": true
+          "description": "name of the user to give access to the Livebox"
         },
         {
           "name": "BOX_PASSWORD",
           "label": "Password of the box",
           "default": "mypassword",
-          "description": "password of the Livebox",
-          "preset": true
+          "description": "password of the Livebox"
         },
         {
           "name": "LOG_SRV",
@@ -186,8 +170,7 @@
           "name": "TZ",
           "label": "Time Zone",
           "default": "Europe/Paris",
-          "description": "Time zone used for the container",
-          "preset": true
+          "description": "Time zone used for the container"
         }
       ]
     },
@@ -225,8 +208,7 @@
           "name": "EXIT_NODE",
           "label": "Liste des noeuds de sortie du proxy",
           "default": "{ca},{us},{de},{nl},{be}",
-          "description": "Liste des noeuds de sortie du proxy separés par des ',' ex : {ca},{us}",
-          "preset": true
+          "description": "Liste des noeuds de sortie du proxy separés par des ',' ex : {ca},{us}"
         }
       ]
     },
@@ -272,68 +254,58 @@
           "name": "DB_USER",
           "label": "Data Base user access",
           "default": "zipsme",
-          "description": "Nom de l'utilisateur de la base de donnée",
-          "preset": true
+          "description": "Nom de l'utilisateur de la base de donnée"
         },
         {
           "name": "DB_NAME",
           "label": "Data Base name",
           "default": "zipsme",
-          "description": "Nom de la base de donnée",
-          "preset": true
+          "description": "Nom de la base de donnée"
         },
         {
           "name": "DB_PASSWORD",
           "label": "DataBase Password",
-          "description": "Mot de passe du user pour l'acces à la base de donnée",
-          "preset": true
+          "description": "Mot de passe du user pour l'acces à la base de donnée"
         },
         {
           "name": "DB_SERVER",
           "label": "DataBase adress",
           "default": "192.1.1.1:3306",
-          "description": "Database ip adresse with Database port",
-          "preset": true
+          "description": "Database ip adresse with Database port"
         },
         {
           "name": "SITE_NAME",
           "label": "WebSite Name",
           "default": "zpi me",
-          "description": "Name of web site",
-          "preset": true
+          "description": "Name of web site"
         },
         {
           "name": "SITE_URL",
           "label": "WebSite url",
           "default": "zpi me",
-          "description": "Web site external url",
-          "preset": true
+          "description": "Web site external url"
         },
         {
           "name": "SERVEUR_SSO",
           "label": "SSO server url",
           "default": "https://192.1.0.1",
-          "description": "SSO server url",
-          "preset": true
+          "description": "SSO server url"
         },
         {
           "name": "APPID_SSO",
           "label": "SSO Application ID",
-          "description": "SSO application ID on sso server",
-          "preset": true
+          "description": "SSO application ID on sso server"
         },
         {
           "name": "SRV_NAME",
           "label": "ZipMe server name",
-          "description": "ZipMe server name",
-          "preset": true
+          "description": "ZipMe server name"
         },
         {
           "name": "TZ",
           "label": "Time Zone",
           "default": "Europe/Paris",
-          "description": "Time zone used for the container",
-          "preset": true
+          "description": "Time zone used for the container"
         }
       ]
     }

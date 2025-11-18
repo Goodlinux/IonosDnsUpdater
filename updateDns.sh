@@ -49,22 +49,23 @@ log()
 #################################
 ##### Gestion des secrets #######
 #################################
-GetSecrets()
-{
-# $1 contient le nom de la variable à lire
-var_name="$1"
-# Expansion indirecte : récupère la valeur de la variable dont le nom est dans var_name
-echo "Nom de la variable : $var_name"
-echo "Valeur : ${!var_name}"
-
-if [ -e ${!var_name} ]; then
-        echo "dossier ok"
-        secret=$(cat ${!var_name})
-else
-        echo "Dossier pas ok"
-        secret=${!var_name}
-fi
-}
+GetSecrets()                                                                     
+{                                                                                
+# $1 contient le nom de la variable à lire                                                                                                               
+var_name="$1"                                                                    
+echo "Nom de la variable : $var_name"                                            
+                                                                                 
+eval "val=\$$var_name"                                                           
+echo "Valeur : $val"                                                             
+                                                                                 
+if [ -f $val ]; then                                                             
+        echo "dossier ok"                                                        
+        secret=$(cat $val)                                                       
+else                                                                             
+        echo "Dossier pas ok"                                                    
+        secret=$val                                                              
+fi                                                                               
+}                                                                                
 
 ##########################################
 ### log information on log server      ###
@@ -380,10 +381,14 @@ fi
 CheckParamIP
 
 # cherche si le secret de l'API ionos est dans la variable ou un fichier
-GetSecrets API_KEY
-API_KEY=$secret
-GetSecrets BOX_PASSWORD
-BOX_PASSWORD=$secret
+# cherche si le secret de l'API ionos est dans la variable ou un fichier         
+GetSecrets API_KEY                                                               
+API_KEY=$secret                                                                  
+echo "API_KEY : $API_KEY"                                                        
+                                                                                 
+GetSecrets BOX_PASSWORD                                                          
+BOX_PASSWORD=$secret                                                             
+echo "BOX_PASSWORD : $BOX_PASSWORD" 
 
 # Retrieve DNS Zone Id
     

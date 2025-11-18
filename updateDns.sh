@@ -46,6 +46,26 @@ log()
 	fi
 }
 
+#################################
+##### Gestion des secrets #######
+#################################
+GetSecrets()
+{
+# $1 contient le nom de la variable à lire
+var_name="$1"
+# Expansion indirecte : récupère la valeur de la variable dont le nom est dans var_name
+echo "Nom de la variable : $var_name"
+echo "Valeur : ${!var_name}"
+
+if [ -e ${!var_name} ]; then
+        echo "dossier ok"
+        secret=$(cat ${!var_name})
+else
+        echo "Dossier pas ok"
+        secret=${!var_name}
+fi
+}
+
 ##########################################
 ### log information on log server      ###
 ### $1 = log level name                ###
@@ -358,6 +378,12 @@ fi
     
 # checks if ip was set and retrieves it if not
 CheckParamIP
+
+# cherche si le secret de l'API ionos est dans la variable ou un fichier
+GetSecrets API_KEY
+API_KEY=$secret
+GetSecrets BOX_PASSWORD
+BOX_PASSWORD=$secret
 
 # Retrieve DNS Zone Id
     

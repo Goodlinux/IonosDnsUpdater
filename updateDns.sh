@@ -53,16 +53,16 @@ GetSecrets()
 {                                                                                
 # $1 contient le nom de la variable à lire                                                                                                               
 var_name="$1"                                                                    
-echo "Nom de la variable : $var_name"                                            
+log "Nom de la variable : $var_name"                                            
                                                                                  
 eval "val=\$$var_name"                                                           
-echo "Valeur : $val"                                                             
+log "Valeur : $val"                                                             
                                                                                  
 if [ -f $val ]; then                                                             
-        echo "dossier ok"                                                        
+        log "dossier ok"                                                        
         secret=$(cat $val)                                                       
 else                                                                             
-        echo "Dossier pas ok"                                                    
+        log "Dossier pas ok"                                                    
         secret=$val                                                              
 fi                                                                               
 }                                                                                
@@ -384,11 +384,11 @@ CheckParamIP
 # cherche si le secret de l'API ionos est dans la variable ou un fichier         
 GetSecrets API_KEY                                                               
 API_KEY=$secret                                                                  
-echo "API_KEY : $API_KEY"                                                        
+log "API_KEY : $API_KEY"                                                        
                                                                                  
 GetSecrets BOX_PASSWORD                                                          
 BOX_PASSWORD=$secret                                                             
-echo "BOX_PASSWORD : $BOX_PASSWORD" 
+log "BOX_PASSWORD : $BOX_PASSWORD" 
 
 # Retrieve DNS Zone Id
     

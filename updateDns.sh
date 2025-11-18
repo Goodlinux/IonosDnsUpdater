@@ -49,10 +49,10 @@ log()
 #################################
 ##### Gestion des secrets #######
 #################################
-GetSecrets()                                                                     
-{                                                                                
-# $1 contient le nom de la variable à lire                                                                                                               
-var_name="$1" 
+GetSecrets()
+{
+# $1 contient le nom de la variable à lire
+var_name="$1"
 log "Nom de la variable : $var_name"
 
 eval "val=\$$var_name"

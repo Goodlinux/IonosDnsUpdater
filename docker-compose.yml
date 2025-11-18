@@ -4,26 +4,19 @@
 # https://docs.docker.com/compose/reference/overview/#use--f-to-specify-name-and-path-of-one-or-more-compose-files
 # https://docs.docker.com/compose/reference/envvars/
 #
-
-version: '3'
-
 services:
   ionosdnsupdater:
     image: goodlinux/ionosdnsupdater:latest
     container_name: ionosdnsupdater-dynip
     restart: always
-    volumes:
-      - ../alpine/sbin:/usr/local/sbin:ro
-    environment:
-      API_KEY: {{ API_KEY }}
-      DOMAIN: {{ DOMAIN }}
-      CRON_DELAY: {{ CRON_DELAY }}
-      VERBOSE: {{ VERBOSE }}
-      BOX_IP: {{ BOX_IP }}
-      BOX_USER: {{ BOX_USER }}
-      BOX_PASSWORD: {{ BOX_PASSWORD }}
-      LOG_SRV: {{ LOG_SRV }}
-      HOSTNAME: {{ HOSTNAME }}
-      TZ: {{ TZ }}
-      UID: {{ UID }}
-      GID: {{ GID }}
+    env_file:
+      - ./dnsupdater.env
+    secrets:
+       - api_key
+       - box_password
+
+secrets:
+   api_key:
+     file: ./api_key.txt
+   box_password:
+     file: ./box_password.txt

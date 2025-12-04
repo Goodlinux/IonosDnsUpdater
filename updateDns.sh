@@ -99,6 +99,9 @@ GetIpFromBox()
 #	log "res : $res"
 	ipv4=$(echo $res | jq -c .data.IPAddress | tr -d '"')
 	ipv6=$(echo $res | jq -c .data.IPv6Address | tr -d '"')
+	
+    log "ipv4 : $ipv4"
+	log "ipv6 : $ipv6"
 }
 
 
@@ -107,26 +110,29 @@ GetIpFromExt()
 	log "Get Ip from external provider" 
     ipv4=$(curl -s ifconfig.me)
     ipv6=$(curl -s https://ipv4v6.lafibre.info/ip.php)
+
+    log "ipv4 : $ipv4"
+	log "ipv6 : $ipv6"
 }
 
 
 GetExtIpAdress() 
 {
     log "------------------"
-	if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $BOX_IP ] ; then
-		GetIpFromBox
-	fi
-    log "Ipv4 = "$ipv4
-    if [ "$ipv4" = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $ipv4 ] ;  then
-		log "Ipv4 from Box : $ipv4"
-
-	else
+	if [ -n "${BOX_PASSWORD:-}" ]; then
+		if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $BOX_IP ] ; then
+			GetIpFromBox
+		fi
+    		log "Ipv4 = "$ipv4
+    	if [ "$ipv4" = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $ipv4 ] ;  then
+			log "Ipv4 from Box : $ipv4"
+		else
 		# try to get IP from externl source
+			GetIpFromExt
+		fi
+	else
 		GetIpFromExt
 	fi
-
-    log "ipv4 : $ipv4"
-	log "ipv6 : $ipv6"
 }
 
 GetZoneId() 
@@ -393,6 +399,7 @@ if [ -n "${BOX_PASSWORD:-}" ]; then
 	GetSecrets BOX_PASSWORD                                                               
 	BOX_PASSWORD=$secret                                                                  
 	log "BOX_PASSWORD : $BOX_PASSWORD" 
+	GetIpFromExt()
 else
 	log "Variable 'BOX_PASSWORD' does not exist."
 fi

@@ -65,7 +65,8 @@ If the record is not found do nothing
 
 # ENV VARIABLES FOR DOCKER CONTAINER  
  
- > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : publicprefix.secret  
+ > - **API_KEY** =  put the Api code and secret you have retrieve from ionos  ex : publicprefix.secret 
+       you can also set it as a secret ex : API_KEY=/run/secrets/api_key and set the docker-compose with a link to the secret file  
  > - **DOMAIN** =   name of the domain/subdomain to update : dns-type. for multiple "domain:type" should be separated by space ex : DOMAIN="my.domain.net:A test.domain.net:AAAA domain.net:SPF"     
  > - **CRON_DELAY** = Delay to start the DNS update via cron  ex : */5  for each 5 minutes 
  > - **PARAMS** = send the parameters to the script ex : -v -a (optional parameter)   
@@ -73,6 +74,7 @@ If the record is not found do nothing
  > - **BOX_IP** = local ip of the livebox to be able to catch external ipv4 and ipv6 from your box ex : 192.168.0.1 (optional parameter)  
  > - **BOX_USER** = user to be connected to the LiveBox 5 ex : admin (optional parameter) 
  > - **BOX_PASSWORD** = password to be connected to the LiveBox 5 ex : monpassword (optional parameter)   
+    you can also set it as a secret ex : BOX_PASSWORD=/run/secrets/box_password and set the docker-compose with a link to the secret file  
  > - **TZ** =       Time zone of the container     ex : Europe/Paris   
   
  Working with IPv4 or IpV6  

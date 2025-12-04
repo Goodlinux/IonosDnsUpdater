@@ -380,7 +380,7 @@ fi
 # cherche si le secret de l'API ionos est dans la variable ou un fichier
 # cherche si le secret de l'API ionos est dans la variable ou un fichier         
 # Check if the variable exists
-if [ -v API_KEY ]; then
+if [ -n "${API_KEY:-}" ]; then
 	GetSecrets API_KEY                                                               
 	API_KEY=$secret                                                                  
 	log "API_KEY : $API_KEY" 
@@ -389,7 +389,7 @@ else
 	exit 1
 fi
 
-if [ -v BOX_PASSWORD ]; then
+if [ -n "${BOX_PASSWORD:-}" ]; then
 	GetSecrets BOX_PASSWORD                                                               
 	BOX_PASSWORD=$secret                                                                  
 	log "BOX_PASSWORD : $BOX_PASSWORD" 

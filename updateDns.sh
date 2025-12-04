@@ -116,7 +116,7 @@ GetExtIpAdress()
 	if [ "$BOX_IP" = "$(echo $BOX_IP | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $BOX_IP ] ; then
 		GetIpFromBox
 	fi
-
+    log "Ipv4 = "$ipv4
     if [ "$ipv4" = "$(echo $ipv4 | grep -E '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$')" ] && [ -n $ipv4 ] ;  then
 		log "Ipv4 from Box : $ipv4"
 
@@ -377,9 +377,6 @@ if [ ! $verbose_mode ]; then
     fi
 fi
     
-# checks if ip was set and retrieves it if not
-CheckParamIP
-
 # cherche si le secret de l'API ionos est dans la variable ou un fichier
 # cherche si le secret de l'API ionos est dans la variable ou un fichier         
 GetSecrets API_KEY                                                               
@@ -389,6 +386,9 @@ log "API_KEY : $API_KEY"
 GetSecrets BOX_PASSWORD                                                          
 BOX_PASSWORD=$secret                                                             
 log "BOX_PASSWORD : $BOX_PASSWORD" 
+
+# checks if ip was set and retrieves it if not
+CheckParamIP
 
 # Retrieve DNS Zone Id
     

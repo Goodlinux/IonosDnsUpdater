@@ -379,13 +379,23 @@ fi
     
 # cherche si le secret de l'API ionos est dans la variable ou un fichier
 # cherche si le secret de l'API ionos est dans la variable ou un fichier         
-GetSecrets API_KEY                                                               
-API_KEY=$secret                                                                  
-log "API_KEY : $API_KEY"                                                        
-                                                                                 
-GetSecrets BOX_PASSWORD                                                          
-BOX_PASSWORD=$secret                                                             
-log "BOX_PASSWORD : $BOX_PASSWORD" 
+# Check if the variable exists
+if [ -v API_KEY ]; then
+	GetSecrets API_KEY                                                               
+	API_KEY=$secret                                                                  
+	log "API_KEY : $API_KEY" 
+else
+	log "Variable 'API_KEY' does not exist."
+	exit 1
+fi
+
+if [ -v BOX_PASSWORD ]; then
+	GetSecrets BOX_PASSWORD                                                               
+	BOX_PASSWORD=$secret                                                                  
+	log "BOX_PASSWORD : $BOX_PASSWORD" 
+else
+	log "Variable 'BOX_PASSWORD' does not exist."
+fi
 
 # checks if ip was set and retrieves it if not
 CheckParamIP

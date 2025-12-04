@@ -399,7 +399,7 @@ if [ -n "${BOX_PASSWORD:-}" ]; then
 	GetSecrets BOX_PASSWORD                                                               
 	BOX_PASSWORD=$secret                                                                  
 	log "BOX_PASSWORD : $BOX_PASSWORD" 
-	GetIpFromExt()
+#	GetIpFromExt()
 else
 	log "Variable 'BOX_PASSWORD' does not exist."
 fi
